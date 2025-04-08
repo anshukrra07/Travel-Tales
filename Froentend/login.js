@@ -17,7 +17,7 @@ document.getElementById("loginButton").addEventListener("click", function (event
         return;
     }
 
-    fetch('http://localhost:5001/api/auth/login', {
+    fetch(`${BACKEND_URL}/api/auth/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -91,7 +91,7 @@ document.getElementById("signupButton").addEventListener("click", function (even
         }
     } else {
         // Save the new user
-        fetch('http://localhost:5001/api/auth/register', {
+        fetch(`${BACKEND_URL}/api/auth/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
