@@ -1,0 +1,43 @@
+.filter-sort-container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    margin: 20px;
+}
+
+.filter-sort-container label {
+    color: #fff;
+    font-size: 1rem;
+}
+
+.filter-sort-container select {
+    padding: 8px;
+    border-radius: 5px;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    cursor: pointer;
+    
+}
+
+/* Smaller style for mobile */
+@media (max-width: 480px) {
+    .filter-sort-container {
+        flex-direction: row;
+        align-items: stretch;
+        padding: 10px;
+        gap: 8px;
+    }
+
+    .filter-sort-container label {
+        font-size: 0.8rem;
+    }
+
+    .filter-sort-container select {
+        font-size: 0.7rem;
+        padding: 5px 8px;
+    }
+}

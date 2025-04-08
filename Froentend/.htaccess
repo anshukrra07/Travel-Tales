@@ -1,0 +1,43 @@
+# Prevent directory listing
+Options -Indexes
+
+# Block access to sensitive files
+<FilesMatch "(^\.htaccess|\.htpasswd|config\.php|database\.php|wp-config\.php)">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
+# Protect against hotlinking (prevents other sites from using your images)
+RewriteEngine on
+RewriteCond %{HTTP_REFERER} !^$
+RewriteCond %{HTTP_REFERER} !^https://travel-tales\.infinityfreeapp\.com/ [NC]
+RewriteRule \.(jpg|jpeg|png|gif)$ - [F]
+
+# Enable browser caching (speed up loading)
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType image/jpg "access plus 1 month"
+    ExpiresByType image/jpeg "access plus 1 month"
+    ExpiresByType image/png "access plus 1 month"
+    ExpiresByType image/gif "access plus 1 month"
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
+    ExpiresByType text/html "access plus 1 day"
+</IfModule>
+
+# Enable Gzip compression (reduce file size)
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/css application/javascript application/json
+</IfModule>
+
+# Redirect HTTP to HTTPS (if SSL is enabled)
+RewriteCond %{HTTPS} !=on
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Prevent iframe embedding (Clickjacking protection)
+Header always append X-Frame-Options DENY
+
+# Block bad bots
+RewriteEngine On
+RewriteCond %{HTTP_USER_AGENT} (bot|crawl|slurp|spider) [NC]
+RewriteRule .* - [F,L]

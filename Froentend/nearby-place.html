@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Place Details</title>
+    <link rel="stylesheet" href="login-check-btn.css">
+    
+    <link rel="stylesheet" href="search-bar-contents.css">
+    <link rel="stylesheet" href="index-style.css">
+    <link rel="stylesheet" href="dynamic-style.css">
+    <link rel="stylesheet" href="all-devices-responsive.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body>
+
+    <header>
+        <a href="index.html" class="logo">Tra<span>vel</span> Ta<span>les</span></a>
+        
+        <!-- Updated Navbar with mobile login items -->
+        <ul class="navbar">
+            <li><a href="index.html">home</a></li>
+            <li><a href="#about">about</a></li>
+            <li><a href="#destinations">destinations</a></li>
+            <li><a href="#tour">tour</a></li>
+            <li><a href="#contact">contact</a></li>
+            
+            <!-- Mobile-only login items -->
+            <li class="mobile-login-item" id="mobile-login-btn">
+                <a href="#" class="nav-btn" onclick="redirectToLogin()">Login</a>
+            </li>
+            <li class="mobile-login-item" id="mobile-account-container" style="display: none;">
+                <div id="mobile-user-icon" class="nav-btn" onclick="toggleDropdown()">
+                    <i class="fa fa-user"><h3>User</h3></i>
+                </div>
+                <div id="mobile-account-dropdown" class="dropdown-menu">
+                    <span id="mobile-username-display"></span>
+                    <button id="mobile-logout-btn" class="nav-btn" onclick="logout()">Logout</button>
+                </div>
+            </li>
+        </ul>
+    
+        <!-- Original h-right section (for desktop) -->
+        <div class="h-right">
+            <!-- Search Bar and Prompt -->
+            <input type="text" id="search-bar" placeholder=" 🔍 Search places..." onkeyup="searchPlaces()" class="nav-btn">
+            <div id="search-prompt" class="search-prompt"></div>
+    
+            <!-- Desktop login/account elements -->
+            <button id="login-btn" class="desktop-login nav-btn" onclick="redirectToLogin()">Login</button>
+            <div id="account-container" class="desktop-account" style="display: none;">
+                <div id="user-icon" class="nav-btn" onclick="toggleDropdown()">
+                    <i class="fa fa-user"></i>
+                </div>
+                <div id="account-dropdown" class="dropdown-menu">
+                    <span id="username-display"></span>
+                    <button id="logout-btn" class="nav-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+    
+            <div class="fa fa-bars navbar-link" id="menu-icon"></div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <div class="destination-header" id="destination-header">
+        <h1 id="place-name">Loading...</h1>
+    </div>
+
+    
+    <!-- Place Details Section -->
+    <div class="destination-container">
+        <section class="destination-detail">
+            <div class="main-image-container">
+                <button id="prev-btn" class="nav-button">❮</button>
+                <img id="place-image" src="images/default.jpg" alt="Destination">
+                <button id="next-btn" class="nav-button">❯</button>
+            </div>
+            <p><strong>📍 Address:</strong> <span id="place-address"></span></p>
+            <p><strong>⭐ Rating:</strong> <span id="place-rating"></span></p>
+        </section>
+    </div>
+
+    <!-- Scrollable Photo Gallery -->
+    <section id="photo-gallery-container" class="photo-gallery"></section>
+
+    <!-- Sidebar for Travel Info & Google Map -->
+    <aside class="destination-sidebar">
+        <div class="sidebar-content">
+            <div class="travel-info">
+                <h3>Travel Info</h3>
+                <ul>
+                    <li><strong>🌦 Best Time to Visit:</strong> All Year Round</li>
+                    <li><strong>🎭 Activities:</strong> Sightseeing, Adventure, Culture</li>
+                    <li><strong>🍽 Food Specialties:</strong> Local Cuisine</li>
+                </ul>
+                <div id="best-time">
+                    <p>Loading best time to visit...</p>
+                </div>
+                <div class="reviews">
+                    <h3>User Reviews</h3>
+                    <div id="reviews-container">
+                        <p>Loading reviews...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Google Map -->
+            <div class="map-container">
+                <div id="map"></div>
+                <p id="distance"><strong>🚗 Distance:</strong> Calculating...</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ✅ Nearby Places Section -->
+<div id="nearby-places"></div>
+<h2>📍 Nearby Places</h2>
+</div>
+
+    <!-- Back to Home Button -->
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="index.html" class="back-btn">⬅ Back to Home</a>
+    </div>
+
+     <!-- newsletter section start -->
+     <section class="newsletter" id="contact">
+        <div class="newsletter-content">
+            <div class="newsletter-text">
+                <h2>Sign up to our newsletter </h2>
+                <p>Receive latest news, update and many other things every week.</p>
+            </div>
+            <form action="#">
+                <input type="email" name="email" placeholder="Enter your email...." required>
+                <button type="submit" class="btn1"><i class="fa fa-telegram"></i></button>
+            </form>
+        </div>
+    </section>
+    <!-- newsletter section end -->
+
+
+     <!-- footer section start -->
+     <section class="footer">
+        <div class="footer-box">
+            <a href="#" class="logo" style="font-size:20px;">Tra<span>vel</span> Ta<span>les</span></a>
+            <p>Enjoy the touring with TravelAround</p>
+            <div class="social">
+                <a href="#"><i class="fa fa-instagram"></i></a>
+                <a href="#"><i class="fa fa-twitter"></i></a>
+                <a href="#"><i class="fa fa-facebook"></i></a>
+            </div>
+        </div>
+        <div class="footer-box">
+            <h3>Company</h3>
+            <a href="#">Travelling</a>
+            <a href="#">About Location</a>
+            <a href="#">Success</a>
+            <a href="#">Information</a>
+        </div>
+        <div class="footer-box">
+            <h3>Resources</h3>
+            <a href="#">Download</a>
+            <a href="#">Help Center</a>
+            <a href="#">Guide Book</a>
+            <a href="#">App Directory</a>
+        </div>  
+        <div class="footer-box">
+            <h3>Travellers</h3>
+            <a href="#">Why Travellers</a>
+            <a href="#">Customer Stories</a>
+        </div>
+        
+
+    </section>
+    <!-- footer section end -->
+
+
+    <!-- copyright section -->
+    <div class="copyright">
+        <p>Developed with ❤ Anshu Arya<br>
+            © Copyright 2025 | Developed by Anshu arya | All rights reserved.</p>
+    </div>
+
+    <!-- Google Maps API -->
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDH3sCg-jsPdmA8tVuhc2AL5ReDUipgd7Y&libraries=places&callback=loadGoogleMap"></script>
+<script src="nearby-script.js"></script>
+<script src="login-check.js"></script>
+<script src="header.js"></script>
+<script src="google.place.api-script.js"></script>
+<script src="pexel.api-script.js"></script>
+
+
+
+    
+</body>
+</html>

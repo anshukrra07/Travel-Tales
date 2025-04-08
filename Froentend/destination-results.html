@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Results</title>
+    <link rel="stylesheet" href="index-style.css">
+    <link rel="stylesheet" href="dynamic-style.css">
+    <link rel="stylesheet" href="descat-style.css">
+</head>
+<body>
+    <header>
+        <a href="index.html" class="logo">Tra<span>vel</span></a>
+        <div class="h-right">
+            <input type="text" id="search-bar" placeholder="Search places..." onkeyup="searchPlaces()" class="nav-btn">
+            <div class="fa fa-bars navbar-link" id="menu-icon"></div>
+        </div>
+    </header>
+
+    <div class="destination-header" id="destination-header">
+        <h1 id="category-name">Category: Loading...</h1>
+    </div>
+
+    <!-- Filter and Sort Options -->
+    <div class="filter-sort-container">
+        <label for="sort-by">Sort By:</label>
+        <select id="sort-by" onchange="sortPlaces()">
+            <option value="rating">Rating (High to Low)</option>
+            <option value="name">Name (A-Z)</option>
+        </select>
+
+        <label for="filter-by">Filter By:</label>
+        <select id="filter-by" onchange="filterPlaces()">
+            <option value="all">All</option>
+            <option value="restaurant">Restaurants</option>
+            <option value="hotel">Hotels</option>
+            <option value="tourist_attraction">Tourist Attractions</option>
+        </select>
+    </div>
+
+    <!-- Places Grid -->
+    <div class="destination-container">
+        <section class="destination-detail">
+            <h2>Top Famous Places</h2>
+            <div id="top-places" class="places-grid"></div>
+        </section>
+    </div>
+
+    <div class="destination-container">
+        <section class="destination-detail">
+            <h2>All Available Places</h2>
+            <div id="all-places" class="places-grid"></div>
+        </section>
+    </div>
+
+    <script>
+        let places = []; // Store fetched places
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const category = urlParams.get("category") || "Unknown Category";
+            document.getElementById("category-name").textContent = `Category: ${category}`;
+
+            // Fetch and display places for this category
+            fetchPlacesByCategory(category);
+        });
+
+        async function fetchPlacesByCategory(category) {
+            const apiKey = "AIzaSyDH3sCg-jsPdmA8tVuhc2AL5ReDUipgd7Y";
+            const location = "40.7128,-74.0060"; // Example: New York City coordinates
+            const radius = 5000; // 5km radius
+            const type = getPlaceTypeFromCategory(category); // Map category to Google Places type
+
+            const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location}&radius=${radius}&type=${type}&key=${AIzaSyDH3sCg-jsPdmA8tVuhc2AL5ReDUipgd7Y}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                places = data.results;
+                displayPlaces(places);
+            } catch (error) {
+                console.error("Error fetching places:", error);
+            }
+        }
+
+        function getPlaceTypeFromCategory(category) {
+            switch (category.toLowerCase()) {
+                case "beach":
+                    return "natural_feature";
+                case "mountain":
+                    return "natural_feature";
+                case "restaurant":
+                    return "restaurant";
+                case "hotel":
+                    return "lodging";
+                case "tourist attraction":
+                    return "tourist_attraction";
+                default:
+                    return "point_of_interest";
+            }
+        }
+
+        function displayPlaces(places) {
+            const topPlacesContainer = document.getElementById("top-places");
+            const allPlacesContainer = document.getElementById("all-places");
+
+            topPlacesContainer.innerHTML = "";
+            allPlacesContainer.innerHTML = "";
+
+            places.forEach(place => {
+                const placeCard = document.createElement("div");
+                placeCard.classList.add("place-card");
+                placeCard.innerHTML = `
+                    <img src="${place.photos ? place.photos[0].getUrl() : 'images/default.jpg'}" alt="${place.name}" class="place-img">
+                    <div class="place-info">
+                        <strong>${place.name}</strong>
+                        <p>⭐ ${place.rating || "No rating"}</p>
+                        <p>📍 ${place.vicinity || "Address not available"}</p>
+                    </div>
+                `;
+                allPlacesContainer.appendChild(placeCard);
+
+                // Add top places to the top section
+                if (place.rating >= 4.5) {
+                    topPlacesContainer.appendChild(placeCard.cloneNode(true));
+                }
+            });
+        }
+
+        function sortPlaces() {
+            const sortBy = document.getElementById("sort-by").value;
+            if (sortBy === "rating") {
+                places.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+            } else if (sortBy === "name") {
+                places.sort((a, b) => a.name.localeCompare(b.name));
+            }
+            displayPlaces(places);
+        }
+
+        function filterPlaces() {
+            const filterBy = document.getElementById("filter-by").value;
+            let filteredPlaces = places;
+            if (filterBy !== "all") {
+                filteredPlaces = places.filter(place => place.types.includes(filterBy));
+            }
+            displayPlaces(filteredPlaces);
+        }
+    </script>
+</body>
+</html>

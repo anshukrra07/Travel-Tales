@@ -1,0 +1,124 @@
+/* Enhanced Google Autocomplete Styling */
+.pac-container {
+    background: var(--bg-color); /* Match website's dark theme */
+    border: 2px solid var(--main-color); /* Bold accent color border */
+    border-radius: 12px; /* Smoother rounded edges */
+    box-shadow: 0 6px 15px rgba(255, 145, 77, 0.3); /* Elegant soft glow */
+    font-family: 'Jost', sans-serif; /* Match website font */
+    margin-top: 8px; /* More spacing from search bar */
+    padding: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+.pac-item {
+    color: var(--text-color); /* White text */
+    padding: 14px 18px; /* Better spacing */
+    border-bottom: 1px solid rgba(255, 145, 77, 0.3); /* Stylish divider */
+    transition: background 0.3s ease, transform 0.3s ease;
+    border-radius: 8px; /* More rounded edges */
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pac-item:hover {
+    background: rgba(255, 145, 77, 0.3); /* Highlight effect */
+    transform: scale(1.05); /* Stronger pop-up effect */
+    box-shadow: 0 3px 10px rgba(255, 145, 77, 0.3);
+}
+
+/* Custom Icons for Autocomplete Items */
+.pac-item::before {
+    content: '📍'; /* FontAwesome location icon */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 1.2rem;
+    color: var(--main-color);
+    opacity: 0.8;
+}
+
+.pac-item-query {
+    color: var(--main-color) !important; /* Highlighted query text */
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.pac-icon {
+    display: none; /* Hide default location pin */
+}
+
+.pac-matched {
+    color: var(--text-color) !important; /* Style matched text */
+    font-weight: 600;
+}
+
+.pac-logo:after {
+    display: none; /* Hide 'Powered by Google' */
+}
+
+
+/* Search Prompt Styling */
+.search-prompt {
+    display: none; /* Hidden by default */
+    font-size: 14px;
+    color: var(--main-color); /* Use the main accent color */
+    margin-top: 8px; /* Space between search bar and prompt */
+    padding: 8px;
+    background: rgba(255, 145, 77, 0.1); /* Light background with opacity */
+    border-radius: 8px;
+    text-align: center;
+    position: absolute; 
+    top: 100%; /* Places it directly below the search bar */
+    left: 0;
+    width: 80%; /* Match the width of the search bar */
+    box-sizing: border-box; /* Ensure padding is included in width */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0; /* Start hidden for fade-in */
+    transition: opacity 0.5s ease-in-out; /* Smooth fade-in and fade-out */
+    z-index: 10; /* Ensures it appears above other elements */
+}
+
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Fade-out animation */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+/* Button Click Animation */
+.button-clicked {
+    animation: buttonClick 0.5s ease-in-out;
+}
+
+@keyframes buttonClick {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+

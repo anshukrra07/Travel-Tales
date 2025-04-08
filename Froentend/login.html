@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Tales | Login</title>
+    <link rel="icon" href="images/favicon.png">
+    <link rel="stylesheet" href="login-style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <!-- Website Name -->
+    <div class="website-name">
+        <h1>
+            <span class="half-white">tra</span><span class="half-orange">vel</span>
+            <span class="half-white">ta</span><span class="half-orange">les</span>
+        </h1>
+        <p>Your Journey Begins Here</p>
+    </div>
+
+    <!-- Login Box -->
+    <div class="box">
+        <div class="container">
+            <!-- Login Form -->
+            <div id="login-form" class="form-container">
+                <div class="top-header">
+                    <header>Login</header>
+                </div>
+                <div class="server-login">
+                    <p><a href="#" onclick="showServerLogin()">Server Login</a></p>
+                </div>
+            
+                <div class="input-field">
+                    <input type="text" id="username" class="input" placeholder="Username" required>
+                    <i class="bx bx-user"></i>
+                </div>
+                <div class="input-field">
+                    <input type="password" id="password" class="input" placeholder="Password" required>
+                    <i class="bx bx-lock-alt"></i>
+                </div>
+                <div class="input-field">
+                    <input type="submit" id="loginButton" class="submit" value="Login">
+                </div>
+                <p id="login-message" class="error-message"></p>
+
+                <div class="bottom">
+                    <div class="left">
+                        <input type="checkbox" id="check">
+                        <label for="check"> Remember Me</label>
+                    </div>
+                    <div class="right">
+                        <label><a href="#" onclick="showForgotPassword()">Forgot password?</a></label>
+                    </div>
+                </div>
+
+                <!-- Social Login -->
+                <div class="social-login">
+                    <button onclick="loginWithGoogle()"><i class="bx bxl-google"></i> Google</button>
+                    <button onclick="loginWithFacebook()"><i class="bx bxl-facebook"></i> Facebook</button>
+                </div>
+
+                <div class="signup-link">
+                    <p>Don't have an account? <a href="#" onclick="showSignUp()">Sign Up</a></p>
+                </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signup-form" class="form-container" style="display: none;">
+                <div class="top-header">
+                    <header>Sign Up</header>
+                </div>
+
+                <div class="input-field">
+                    <input type="text" id="new-username" class="input" placeholder="Create Username" required>
+                    <i class="bx bx-user"></i>
+                </div>
+                <div class="input-field">
+                    <input type="email" id="email" class="input" placeholder="Email" required>
+                    <i class="bx bx-envelope"></i>
+                </div>
+                <div class="input-field">
+                    <input type="password" id="new-password" class="input" placeholder="Password" required>
+                    <i class="bx bx-lock-alt"></i>
+                </div>
+                <div class="password-strength">
+                    <span>Password Strength:</span> <span id="password-strength-text" class="weak">Weak</span>
+                </div>
+                <div class="input-field">
+                    <input type="date" id="dob" class="input" placeholder="Date of Birth" required>
+                    <i class="bx bx-calendar"></i>
+                </div>
+                <div class="input-field">
+                    <input type="submit" id="signupButton" class="submit" value="Sign Up">
+                </div>
+                <p id="signup-message" class="error-message"></p>
+
+                <!-- Social Login -->
+                <div class="social-login">
+                    <button onclick="loginWithGoogle()"><i class="bx bxl-google"></i> Google</button>
+                    <button onclick="loginWithFacebook()"><i class="bx bxl-facebook"></i> Facebook</button>
+                </div>
+
+                <div class="signup-link">
+                    <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
+                </div>
+            </div>
+
+            <!-- Server Login Form -->
+            <div id="server-login-form" class="form-container" style="display: none;">
+                <div class="top-header">
+                    <header>Server Login</header>
+                </div>
+                <div class="input-field">
+                    <input type="text" id="server-username" class="input" placeholder="Server Username" required>
+                    <i class="bx bx-user"></i>
+                </div>
+                <div class="input-field">
+                    <input type="password" id="server-password" class="input" placeholder="Server Password" required>
+                    <i class="bx bx-lock-alt"></i>
+                </div>
+                <div class="input-field">
+                    <input type="submit" id="serverLoginButton" class="submit" value="Login">
+                </div>
+                <p id="server-login-message" class="error-message"></p>
+
+                <div class="server-login">
+                    <p><a href="#" onclick="showLogin()">Back to Login</a></p>
+                </div>
+            </div>
+
+            <!-- Forgot Password Form -->
+            <div id="forgot-password-form" class="form-container" style="display: none;">
+                <div class="top-header">
+                    <header>Forgot Password</header>
+                </div>
+                <div class="input-field">
+                    <input type="email" id="forgot-email" class="input" placeholder="Enter your email" required>
+                    <i class="bx bx-envelope"></i>
+                </div>
+                <div class="input-field">
+                    <input type="date" id="forgot-dob" class="input" placeholder="Date of Birth" required>
+                    <i class="bx bx-calendar"></i>
+                </div>
+                <div class="input-field">
+                    <input type="submit" id="resetButton" class="submit" value="Reset Password">
+                </div>
+                <p id="forgot-message" class="error-message"></p>
+                <div class="server-login">
+                    <p><a href="#" onclick="showLogin()">Back to Login</a></p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <script src="login.js"></script>
+</body>
+</html>
