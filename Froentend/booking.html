@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Travel Comparison</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+    .search-box {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .search-box input {
+      padding: 10px;
+      margin: 0 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .tabs button {
+      padding: 10px 20px;
+      border: none;
+      background: #ddd;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .tabs button.active {
+      background: #007bff;
+      color: white;
+    }
+    .section {
+      display: none;
+    }
+    .section.active {
+      display: block;
+    }
+    .card {
+      background: white;
+      margin: 10px auto;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+      max-width: 600px;
+    }
+    .card h3 {
+      margin: 0 0 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="search-box">
+    <input type="text" id="from" placeholder="From" />
+    <input type="text" id="to" placeholder="To" />
+    <button onclick="searchAll()">Search</button>
+  </div>
+
+  <div class="tabs">
+    <button onclick="switchTab('flights')" class="active">Flights</button>
+    <button onclick="switchTab('hotels')">Hotels</button>
+    <button onclick="switchTab('trains')">Trains</button>
+    <button onclick="switchTab('buses')">Buses</button>
+  </div>
+
+  <div id="flights" class="section active">
+    <h2>✈️ Flights</h2>
+    <script src="//tp.media/content?currency=inr&locale=en&origin=DEL&destination=BOM&type=avia&limit=5&marker=640690&powered_by=false&width=100%&height=300" charset="utf-8"></script>
+  </div>
+
+  <div id="hotels" class="section">
+    <h2>🏨 Hotels</h2>
+    <div id="hotel-results"></div>
+  </div>
+
+  <div id="trains" class="section">
+    <h2>🚆 Trains</h2>
+    <div class="card">
+      <h3>Rajdhani Express</h3>
+      <p>₹1,250 | Duration: 15h</p>
+    </div>
+    <div class="card">
+      <h3>Duronto Express</h3>
+      <p>₹1,400 | Duration: 16h</p>
+    </div>
+  </div>
+
+  <div id="buses" class="section">
+    <h2>🚌 Buses</h2>
+    <div class="card">
+      <h3>VRL Travels</h3>
+      <p>₹850 | Duration: 20h | AC Sleeper</p>
+    </div>
+    <div class="card">
+      <h3>SRS Travels</h3>
+      <p>₹780 | Duration: 21h | Semi Sleeper</p>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tab) {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.tabs button').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(tab).classList.add('active');
+      document.querySelector(`.tabs button[onclick="switchTab('${tab}')"]`).classList.add('active');
+    }
+
+    async function searchAll() {
+      const to = document.getElementById("to").value.trim();
+      if (!to) return alert("Enter destination");
+
+      // Fetch hotel data from Travelpayouts
+      const url = `https://engine.hotellook.com/api/v2/cache.json?location=${encodeURIComponent(to)}&currency=inr&language=en&limit=3`;
+      const res = await fetch(url);
+      const hotels = await res.json();
+
+      const results = document.getElementById("hotel-results");
+      results.innerHTML = "";
+
+      if (!hotels.length) {
+        results.innerHTML = "<p>No hotels found.</p>";
+        return;
+      }
+
+      hotels.forEach(hotel => {
+        const div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `
+          <h3>${hotel.hotelName}</h3>
+          <p>₹${hotel.priceFrom} | ⭐ ${hotel.stars}</p>
+          <a href="https://search.hotellook.com/?marker=640690&hotelId=${hotel.hotelId}" target="_blank">Book Now</a>
+        `;
+        results.appendChild(div);
+      });
+    }
+  </script>
+</body>
+</html>

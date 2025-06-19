@@ -87,3 +87,5 @@ function sortPlaces() {
     }
     displayPlaces(places);
 }
+
+

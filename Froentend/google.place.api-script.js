@@ -25,8 +25,13 @@ function initializeAutocomplete() {
         let placeRating = place.rating ? place.rating : "No rating available";
 
         // Redirect to a new page with place details in URL
-        let queryString = `?name=${encodeURIComponent(placeName)}&image=${encodeURIComponent(placeImage)}&address=${encodeURIComponent(placeAddress)}&rating=${encodeURIComponent(placeRating)}`;
-        window.location.href = `dynamic-destination.html${queryString}`;
+// ✅ Get coordinates
+let lat = place.geometry.location.lat();
+let lng = place.geometry.location.lng();
+
+// ✅ Redirect with lat/lng included
+let queryString = `?name=${encodeURIComponent(placeName)}&image=${encodeURIComponent(placeImage)}&address=${encodeURIComponent(placeAddress)}&rating=${encodeURIComponent(placeRating)}&lat=${lat}&lng=${lng}`;
+window.location.href = `dynamic-destination.html${queryString}`;
     });
 }
 

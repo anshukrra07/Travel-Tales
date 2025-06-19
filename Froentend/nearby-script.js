@@ -1,4 +1,16 @@
 document.addEventListener("DOMContentLoaded", function () {
+    window.onload = function () {
+    initializeAutocomplete();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const city = urlParams.get("name"); // we assume this is a city or place
+
+    if (city) {
+        fetchWeather(city);
+    }
+};
+
+
     const urlParams = new URLSearchParams(window.location.search);
     const placeName = urlParams.get("name") || "Unknown Place";
     const placeImage = urlParams.get("image") || "images/default.jpg";
@@ -16,6 +28,8 @@ document.addEventListener("DOMContentLoaded", function () {
     if (placeAddress !== "Address not available") {
         setTimeout(loadGoogleMap, 1000);
     }
+
+
 });
 
 
@@ -77,8 +91,6 @@ function displayPlaces(category, places) {
         placesContainer.appendChild(placeCard);
     });
 }
-
-
 
 
 

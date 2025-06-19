@@ -4,11 +4,20 @@ const bcrypt = require('bcryptjs');
 const userSchema = new mongoose.Schema({
   username: { type: String, unique: true },
   email: { type: String, unique: true },
-  password: String,
-  dob: {
-    type: Date, // ✅ Correct data type for Date of Birth
-    required: true
+  password: {
+  type: String,
+  default: null,
+},
+dob: {
+  type: Date,
+  required: function () {
+    return !this.googleLogin;
   },
+},
+googleLogin: {
+  type: Boolean,
+  default: false,
+},
   createdAt: {
     type: Date,
     default: Date.now

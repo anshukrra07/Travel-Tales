@@ -1,0 +1,107 @@
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.85);
+  backdrop-filter: blur(4px);
+  text-align: center;
+}
+
+.image-popup-content img {
+  max-width: 90%;
+  max-height: 85vh;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+  cursor: zoom-out;
+  animation: fadeZoom 0.3s ease;
+}
+
+@keyframes fadeZoom {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.nav-button {
+  position: absolute;
+  top: 50%;
+  font-size: 30px;
+  background: none;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  z-index: 10001;
+}
+
+.nav-button:first-of-type { left: 0; }
+.nav-button:last-of-type { right: 0; }
+
+.close-btn {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 28px;
+  color: white;
+  cursor: pointer;
+  z-index: 10001;
+}
+
+#popup-image {
+    will-change: transform;
+    user-select: none;
+    -webkit-user-drag: none;
+        touch-action: pan-x pan-y; /* Allow vertical and horizontal panning */
+    transform-origin: center center;
+    transition: transform 0.25s cubic-bezier(0.33, 1, 0.68, 1);
+    cursor: zoom-in;
+    max-width: 90%;
+    max-height: 80vh;
+    width: auto;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    pointer-events: auto;
+}
+
+/* Dragging state */
+#popup-image.is-dragging {
+    transition: none;
+    cursor: grabbing;
+}
+
+/* Zoomed state */
+#popup-image.is-zoomed {
+    cursor: grab;
+}
+
+.image-popup-content {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    touch-action: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Disable swipe transitions when zoomed */
+.image-popup-content.zoomed {
+    touch-action: none;
+}
+
+/* Prevent content jumping during transitions */
+.modal {
+    overflow: hidden;
+}
+
+/* Smooth transform performance */
+.image-popup-content, 
+#popup-image {
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+}
+

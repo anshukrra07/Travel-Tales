@@ -57,4 +57,65 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+const getUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.status(200).json({ status: "success", user });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const { OAuth2Client } = require('google-auth-library');
+const jwt = require('jsonwebtoken');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+const googleLogin = async (req, res) => {
+  try {
+    const { idToken } = req.body;
+
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name } = payload;
+
+    let user = await User.findOne({ email });
+
+    if (!user) {
+      const username = name.toLowerCase().replace(/\s+/g, '');
+      user = new User({
+        username,
+        email,
+        password: null,
+        dob: null,
+        googleLogin: true,
+      });
+      await user.save();
+    }
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    res.status(200).json({
+      status: "success",
+      message: "Google login successful",
+      user: {
+        username: user.username,
+        email: user.email,
+      },
+      token,
+    });
+
+  } catch (error) {
+    console.error("Google Login Error:", error);
+    res.status(500).json({ status: "error", message: "Google login failed" });
+  }
+};
+
+module.exports = { registerUser, loginUser, getUserProfile ,googleLogin};

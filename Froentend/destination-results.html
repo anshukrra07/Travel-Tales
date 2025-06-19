@@ -1,150 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Category Results</title>
-    <link rel="stylesheet" href="index-style.css">
-    <link rel="stylesheet" href="dynamic-style.css">
-    <link rel="stylesheet" href="descat-style.css">
+  <meta charset="UTF-8">
+  <title>Image Popup with Zoom & Drag</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+
+    img.thumbnail {
+      width: 300px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .popup {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .popup-content {
+      position: relative;
+      overflow: hidden;
+      max-width: 90vw;
+      max-height: 90vh;
+    }
+
+    .popup img {
+      max-width: none;
+      transform-origin: top left;
+      cursor: grab;
+      user-select: none;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 22px;
+      color: white;
+      background: #000;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <a href="index.html" class="logo">Tra<span>vel</span></a>
-        <div class="h-right">
-            <input type="text" id="search-bar" placeholder="Search places..." onkeyup="searchPlaces()" class="nav-btn">
-            <div class="fa fa-bars navbar-link" id="menu-icon"></div>
-        </div>
-    </header>
 
-    <div class="destination-header" id="destination-header">
-        <h1 id="category-name">Category: Loading...</h1>
+  <h2>Click the image below:</h2>
+  <img src="preview.jpg" alt="Cat" class="thumbnail" id="mainImage">
+
+  <div class="popup" id="popup">
+    <div class="popup-content" id="popupContent">
+      <span class="close-btn" id="closeBtn">&times;</span>
+      <img src="preview.jpg" alt="Zoomable" id="popupImage">
     </div>
+  </div>
 
-    <!-- Filter and Sort Options -->
-    <div class="filter-sort-container">
-        <label for="sort-by">Sort By:</label>
-        <select id="sort-by" onchange="sortPlaces()">
-            <option value="rating">Rating (High to Low)</option>
-            <option value="name">Name (A-Z)</option>
-        </select>
+<script>
+  const popup = document.getElementById("popup");
+  const mainImage = document.getElementById("mainImage");
+  const closeBtn = document.getElementById("closeBtn");
+  const popupImage = document.getElementById("popupImage");
 
-        <label for="filter-by">Filter By:</label>
-        <select id="filter-by" onchange="filterPlaces()">
-            <option value="all">All</option>
-            <option value="restaurant">Restaurants</option>
-            <option value="hotel">Hotels</option>
-            <option value="tourist_attraction">Tourist Attractions</option>
-        </select>
-    </div>
+  let scale = 1;
+  let offsetX = 0;
+  let offsetY = 0;
+  let isDragging = false;
+  let lastX, lastY;
 
-    <!-- Places Grid -->
-    <div class="destination-container">
-        <section class="destination-detail">
-            <h2>Top Famous Places</h2>
-            <div id="top-places" class="places-grid"></div>
-        </section>
-    </div>
+  mainImage.addEventListener("click", () => {
+    popup.style.display = "flex";
+    scale = 1;
+    offsetX = offsetY = 0;
+    updateTransform();
+  });
 
-    <div class="destination-container">
-        <section class="destination-detail">
-            <h2>All Available Places</h2>
-            <div id="all-places" class="places-grid"></div>
-        </section>
-    </div>
+  closeBtn.addEventListener("click", () => {
+    popup.style.display = "none";
+  });
 
-    <script>
-        let places = []; // Store fetched places
+  function updateTransform() {
+    popupImage.style.transform = `translate(${offsetX}px, ${offsetY}px) scale(${scale})`;
+  }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            const category = urlParams.get("category") || "Unknown Category";
-            document.getElementById("category-name").textContent = `Category: ${category}`;
+  popupImage.addEventListener("wheel", (e) => {
+    e.preventDefault();
+    const rect = popupImage.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
 
-            // Fetch and display places for this category
-            fetchPlacesByCategory(category);
-        });
+    const prevScale = scale;
 
-        async function fetchPlacesByCategory(category) {
-            const apiKey = "AIzaSyDH3sCg-jsPdmA8tVuhc2AL5ReDUipgd7Y";
-            const location = "40.7128,-74.0060"; // Example: New York City coordinates
-            const radius = 5000; // 5km radius
-            const type = getPlaceTypeFromCategory(category); // Map category to Google Places type
+    // Zoom sensitivity: smaller delta = smoother zoom
+    const zoomFactor = 0.1;
+    const direction = e.deltaY > 0 ? -1 : 1;
+    scale += direction * zoomFactor * scale;
 
-            const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=${location}&radius=${radius}&type=${type}&key=${AIzaSyBR96C-SnCuewAhyL5bLxyxycMwXv7EvfQ}`;
+    // Clamp the scale value between 1 and 3
+    scale = Math.min(Math.max(scale, 1), 3);
 
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                places = data.results;
-                displayPlaces(places);
-            } catch (error) {
-                console.error("Error fetching places:", error);
-            }
-        }
+    // Adjust offset to zoom towards cursor
+    offsetX -= (mouseX / prevScale - mouseX / scale);
+    offsetY -= (mouseY / prevScale - mouseY / scale);
 
-        function getPlaceTypeFromCategory(category) {
-            switch (category.toLowerCase()) {
-                case "beach":
-                    return "natural_feature";
-                case "mountain":
-                    return "natural_feature";
-                case "restaurant":
-                    return "restaurant";
-                case "hotel":
-                    return "lodging";
-                case "tourist attraction":
-                    return "tourist_attraction";
-                default:
-                    return "point_of_interest";
-            }
-        }
+    updateTransform();
+  });
 
-        function displayPlaces(places) {
-            const topPlacesContainer = document.getElementById("top-places");
-            const allPlacesContainer = document.getElementById("all-places");
+  popupImage.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    isDragging = true;
+    lastX = e.clientX;
+    lastY = e.clientY;
+    popupImage.style.cursor = "grabbing";
+  });
 
-            topPlacesContainer.innerHTML = "";
-            allPlacesContainer.innerHTML = "";
+  window.addEventListener("mousemove", (e) => {
+    if (!isDragging) return;
+    offsetX += e.clientX - lastX;
+    offsetY += e.clientY - lastY;
+    lastX = e.clientX;
+    lastY = e.clientY;
+    updateTransform();
+  });
 
-            places.forEach(place => {
-                const placeCard = document.createElement("div");
-                placeCard.classList.add("place-card");
-                placeCard.innerHTML = `
-                    <img src="${place.photos ? place.photos[0].getUrl() : 'images/default.jpg'}" alt="${place.name}" class="place-img">
-                    <div class="place-info">
-                        <strong>${place.name}</strong>
-                        <p>⭐ ${place.rating || "No rating"}</p>
-                        <p>📍 ${place.vicinity || "Address not available"}</p>
-                    </div>
-                `;
-                allPlacesContainer.appendChild(placeCard);
+  window.addEventListener("mouseup", () => {
+    isDragging = false;
+    popupImage.style.cursor = "grab";
+  });
+</script>
 
-                // Add top places to the top section
-                if (place.rating >= 4.5) {
-                    topPlacesContainer.appendChild(placeCard.cloneNode(true));
-                }
-            });
-        }
-
-        function sortPlaces() {
-            const sortBy = document.getElementById("sort-by").value;
-            if (sortBy === "rating") {
-                places.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-            } else if (sortBy === "name") {
-                places.sort((a, b) => a.name.localeCompare(b.name));
-            }
-            displayPlaces(places);
-        }
-
-        function filterPlaces() {
-            const filterBy = document.getElementById("filter-by").value;
-            let filteredPlaces = places;
-            if (filterBy !== "all") {
-                filteredPlaces = places.filter(place => place.types.includes(filterBy));
-            }
-            displayPlaces(filteredPlaces);
-        }
-    </script>
 </body>
 </html>

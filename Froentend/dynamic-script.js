@@ -3,6 +3,17 @@
 document.addEventListener("DOMContentLoaded", function () {
     console.log("Dynamic Script Loaded!");
 
+    window.onload = function () {
+    initializeAutocomplete();
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const city = urlParams.get("name"); // we assume this is a city or place
+
+    if (city) {
+        fetchWeather(city);
+    }
+};
+
     // ✅ Extract URL Parameters (Sent from index.html)
     const urlParams = new URLSearchParams(window.location.search);
     const placeName = urlParams.get("name") || "Dynamic Destination";
@@ -91,6 +102,7 @@ function displayPlaces(category, places) {
         const placeName = urlParams.get("name") || "Unknown Destination";
         document.getElementById("place-name").textContent = placeName;
     });
+
 
 
 

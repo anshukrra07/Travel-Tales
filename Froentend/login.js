@@ -255,8 +255,42 @@ function loginWithFacebook() {
 }
 
 
+fetch(`${BACKEND_URL}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
+  })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.status === "success") {
+        localStorage.setItem("token", data.token); // Save token
+        window.location.href = "account.html";
+      } else {
+        // handle error
+      }
+    });
 
 
+function handleGoogleLogin(response) {
+    const idToken = response.credential;
+
+    fetch(`${BACKEND_URL}/api/auth/google-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idToken }),
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            localStorage.setItem("loggedInUser", data.user.username);
+            localStorage.setItem("token", data.token);
+            window.location.href = "index.html";
+        } else {
+            alert(data.message || "Google login failed");
+        }
+    })
+    .catch(err => console.error("Google login error:", err));
+}
 
 
 

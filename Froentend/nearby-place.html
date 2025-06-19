@@ -5,11 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Place Details</title>
+
+    <link rel="icon" href="images/favicon.png">
+
     <link rel="stylesheet" href="login-check-btn.css">
     
     <link rel="stylesheet" href="search-bar-contents.css">
+
     <link rel="stylesheet" href="index-style.css">
+
     <link rel="stylesheet" href="dynamic-style.css">
+    
+    <link rel="stylesheet" href="weather.css"> 
+
+    <link rel="stylesheet" href="booking.css"> 
+
+    <link rel="stylesheet" href="pixel.css"> 
+
     <link rel="stylesheet" href="all-devices-responsive.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -74,24 +86,45 @@
     <div class="destination-container">
         <section class="destination-detail">
             <div class="main-image-container">
-                <button id="prev-btn" class="nav-button">❮</button>
-                <img id="place-image" src="images/default.jpg" alt="Destination">
-                <button id="next-btn" class="nav-button">❯</button>
-            </div>
-            <p><strong>📍 Address:</strong> <span id="place-address"></span></p>
-            <p><strong>⭐ Rating:</strong> <span id="place-rating"></span></p>
+    <button id="prev-btn" class="nav-button">❮</button>
+    <img id="place-image" src="images/default.jpg" alt="Destination" style="cursor: zoom-in;">
+    <button id="next-btn" class="nav-button">❯</button>
+</div>
+
+
         </section>
     </div>
+    
 
     <!-- Scrollable Photo Gallery -->
     <section id="photo-gallery-container" class="photo-gallery"></section>
 
     <!-- Sidebar for Travel Info & Google Map -->
     <aside class="destination-sidebar">
+    <div id="weather-info" class="weather-glass-card" onclick="openWeatherPopup()">
+  <div class="weather-left">
+    <div class="weather-city" id="weather-city">City</div>
+    <div class="weather-temp" id="weather-temp">--°C</div>
+    <div class="weather-condition" id="weather-condition">--</div>
+    
+  </div>
+  <div class="weather-center">
+    <img id="weather-icon" src="" alt="Weather Icon" />
+   
+  </div>
+  <div class="weather-right">
+     <div>🌡️ Feels like: <span id="weather-feelslike">--°C</span></div>
+    <div>💧 Humidity: <span id="weather-humidity">--%</span></div>
+    <div>💨 Wind: <span id="weather-wind">-- km/h</span></div>
+    
+  </div>
+</div>
         <div class="sidebar-content">
             <div class="travel-info">
                 <h3>Travel Info</h3>
                 <ul>
+                     <p><strong>📍 Address:</strong> <span id="place-address"></span></p>
+            <p><strong>⭐ Rating:</strong> <span id="place-rating"></span></p>
                     <li><strong>🌦 Best Time to Visit:</strong> All Year Round</li>
                     <li><strong>🎭 Activities:</strong> Sightseeing, Adventure, Culture</li>
                     <li><strong>🍽 Food Specialties:</strong> Local Cuisine</li>
@@ -102,10 +135,15 @@
                 <div class="reviews">
                     <h3>User Reviews</h3>
                     <div id="reviews-container">
-                        <p>Loading reviews...</p>
+                        <p>🌟🌟🌟🌟🌟 "Amazing place!" - Alice</p>
+                <p>🌟🌟🌟🌟 "Beautiful views, must visit!" - John</p>
                     </div>
                 </div>
+                <div style="margin-top: 20px;">
+   <button class="book-btn" onclick="openBookingPopup()">📖 Book Now</button>
+</div>
             </div>
+            
 
             <!-- Google Map -->
             <div class="map-container">
@@ -183,16 +221,106 @@
             © Copyright 2025 | Developed by Anshu arya | All rights reserved.</p>
     </div>
 
+    <!-- popups -->
+    <!-- 📸 Image Popup Modal -->
+     
+<div id="image-popup" class="modal">
+  <div class="image-popup-content">
+    <span class="close-btn" onclick="closeImagePopup()">×</span>
+    <button class="nav-button" onclick="showPrevImage()">❮</button>
+    <img id="popup-image" src="images/default.jpg" alt="Popup View">
+    <button class="nav-button" onclick="showNextImage()">❯</button>
+  </div>
+</div>
+ 
+    <!-- Booking Popup -->
+<div id="booking-popup" class="modal1">
+  <div class="modal-content">
+    <span class="close-btn1" onclick="closeBookingPopup()">×</span>
+    <h2>Book your trip to <span id="popup-place-name">...</span></h2>
+
+    <!-- Category Tabs -->
+    <div class="category-tabs">
+      <button class="tab active" onclick="switchTab('flights')">Flights</button>
+      <button class="tab" onclick="switchTab('hotels')">Hotels</button>
+      <button class="tab" onclick="switchTab('trains')">Trains</button>
+      <button class="tab" onclick="switchTab('buses')">Buses</button>
+    </div>
+
+    <!-- Flights Tab -->
+    <div id="flights-tab" class="tab-content active-tab">
+      <div class="popup-links">
+        <a id="flight-mmt" target="_blank" class="partner-link">
+          <img src="https://promos.makemytrip.com/Growth/Images/1x/mmt_dt_top_icon.png" alt="MakeMyTrip Flights">
+          <span>MakeMyTrip</span>
+        </a>
+        <a id="flight-cleartrip" target="_blank" class="partner-link">
+          <img src="https://www.goindigo.in/content/dam/s6web/in/en/assets/logo/IndiGo_logo_2x.png" alt="Cleartrip Flights">
+          <span>IndiGo</span>
+        </a>
+        <a id="flight-yatra" target="_blank" class="partner-link">
+          <img src="https://www.yatra.com/react-home/_next/static/media/logo.04fb10f6.svg" alt="Yatra Flights">
+          <span>Yatra</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Hotels Tab -->
+    <div id="hotels-tab" class="tab-content">
+      <div class="popup-links">
+        <a id="hotel-bcom" target="_blank" class="partner-link">
+          <img src="https://cdn.iconscout.com/icon/free/png-256/free-bookingcom-2752068-2284888.png" alt="Booking.com">
+          <span>Booking.com</span>
+        </a>
+        <a id="hotel-mmt" target="_blank" class="partner-link">
+          <img src="https://promos.makemytrip.com/Growth/Images/1x/mmt_dt_top_icon.png" alt="MakeMyTrip Hotels">
+          <span>MakeMyTrip</span>
+        </a>
+        <a id="hotel-oyo" target="_blank" class="partner-link">
+          <img src="data:image/png;base64,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" alt="OYO">
+          <span>OYO</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Trains Tab -->
+    <div id="trains-tab" class="tab-content">
+      <div class="popup-links">
+        <a id="train-irctc" target="_blank" class="partner-link">
+          <img src="https://www.irctc.co.in/nget/assets/images/logo.png" alt="IRCTC Official">
+          <span>IRCTC</span>
+        </a>
+        <a id="train-mmttrain" target="_blank" class="partner-link">
+          <img src="https://promos.makemytrip.com/Growth/Images/1x/mmt_dt_top_icon.png" alt="MMT Trains">
+          <span>MAKE MY TRIP</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Buses Tab -->
+    <div id="buses-tab" class="tab-content">
+      <div class="popup-links">
+        <a id="bus-redbus" target="_blank" class="partner-link">
+          <img src="data:image/png;base64,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" alt="redBus">
+          <span>REDBUS</span>
+        </a>
+        <a id="bus-zoomcar" target="_blank" class="partner-link">
+          <img src="https://www.zoomcar.com/img/zoomcar-logo-new-green.png" alt="Zoomcar">
+          <span>Zoomcar</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
     <!-- Google Maps API -->
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBR96C-SnCuewAhyL5bLxyxycMwXv7EvfQ&libraries=places&callback=loadGoogleMap"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhnLbeiOJrL9TmbnW9-xoh41gQiFofqiY&libraries=places&callback=loadGoogleMap"></script>
 <script src="nearby-script.js"></script>
 <script src="login-check.js"></script>
 <script src="header.js"></script>
 <script src="google.place.api-script.js"></script>
 <script src="pexel.api-script.js"></script>
-
-
-
-    
+ <script src="weather.js"></script>
+ <script src="booking.js"></script>
 </body>
 </html>
