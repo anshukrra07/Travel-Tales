@@ -24,4 +24,7 @@ const PORT = process.env.PORT || 5001;
 if (!fs.existsSync('uploads')) fs.mkdirSync('uploads');
 
 app.use('/api', captureRoutes); // mount capture route
+app.get("/api/ping", (req, res) => {
+  res.send("✅ Backend is alive");
+});
 app.listen(PORT, '0.0.0.0', () => console.log(`🚀 Server running on port ${PORT}`));

