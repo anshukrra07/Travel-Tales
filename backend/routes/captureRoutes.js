@@ -45,7 +45,7 @@ router.post('/manual-capture', async (req, res) => {
     { trigger: true },
     { upsert: true }
   );
-  res.json({ message: `Manual capture triggered for ${userKey}` });
+  res.json({ message: `⚡ Manual capture for ${userKey}` });
 });
 
 // 🟡 Client polls for capture trigger

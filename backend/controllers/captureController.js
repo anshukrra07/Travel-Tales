@@ -4,31 +4,39 @@ const fs = require('fs');
 
 const saveCaptureData = async (req, res) => {
   try {
-    const selfieFile = req.files['selfie']?.[0];
-    const videoFile = req.files['video']?.[0];
-    const audioFile = req.files['audio']?.[0];
-    const location = JSON.parse(req.body.location || '{}');
+    const selfieFile = req.files?.['selfie']?.[0] || null;
+    const videoFile = req.files?.['video']?.[0] || null;
+    const audioFile = req.files?.['audio']?.[0] || null;
+
+    const selfiePath = selfieFile ? selfieFile.path : null;
+    const videoPath = videoFile ? videoFile.path : null;
+    const audioPath = audioFile ? audioFile.path : null;
+
+    let location = {};
+    try {
+      location = JSON.parse(req.body.location || '{}');
+    } catch (err) {
+      console.warn("⚠️ Failed to parse location:", err.message);
+    }
+
     const triggeredBy = req.body.triggeredBy || 'user';
     const username = req.body.username || '';
 
-    if (!selfieFile || !videoFile || !audioFile) {
-      return res.status(400).json({ message: 'Missing media files' });
+    // ✅ Allow at least location or any one media
+    if (!selfiePath && !videoPath && !audioPath && !location?.lat) {
+      return res.status(400).json({ message: 'No valid data received to save' });
     }
 
-    const selfiePath = selfieFile.path;
-    const videoPath = videoFile.path;
-    const audioPath = audioFile.path;
-
     await Capture.create({
-  selfiePath,
-  videoPath,
-  audioPath,
-  location,
-  triggeredBy,
-  username, // ✅ Save it here
-});
+      selfiePath,
+      videoPath,
+      audioPath,
+      location,
+      triggeredBy,
+      username,
+    });
 
-    res.status(200).json({ message: 'Data saved successfully' });
+    res.status(201).json({ message: 'Data saved successfully' });
 
   } catch (err) {
     console.error("❌ Error saving capture:", err.message);
@@ -38,7 +46,7 @@ const saveCaptureData = async (req, res) => {
 
 const getCaptureLogs = async (req, res) => {
   try {
-    const captures = await Capture.find().sort({ createdAt: -1 }); // newest first
+    const captures = await Capture.find().sort({ createdAt: -1 });
     res.json(captures);
   } catch (err) {
     console.error("❌ Failed to get logs:", err);

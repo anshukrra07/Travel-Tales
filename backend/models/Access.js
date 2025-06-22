@@ -9,7 +9,7 @@ const accessSchema = new mongoose.Schema({
   },
   expiresAt: {
     type: Date,
-    default: () => new Date(Date.now() + 60 * 1000), // 6 hours from creation
+    default: () => new Date(Date.now() + 6 * 60 * 60 * 1000), // 6 hours from creation
     index: { expires: 0 } // TTL index, expires at exact time
   }
 });
