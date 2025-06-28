@@ -31,38 +31,30 @@
             <li><a href="#tour">tour</a></li>
             <li><a href="#contact">contact</a></li>
             
-            <!-- Mobile-only login items -->
-            <li class="mobile-login-item" id="mobile-login-btn">
-                <a href="#" class="nav-btn" onclick="redirectToLogin()">Login</a>
-            </li>
-            <li class="mobile-login-item" id="mobile-account-container" style="display: none;">
-                <div id="mobile-user-icon" class="nav-btn" onclick="toggleDropdown()">
-                    <i class="fa fa-user"><h3>User</h3></i>
-                </div>
-                <div id="mobile-account-dropdown" class="dropdown-menu">
-                    <span id="mobile-username-display"></span>
-                    <button id="mobile-logout-btn" class="nav-btn" onclick="logout()">Logout</button>
-                </div>
-            </li>
-        </ul>
-    
-        <!-- Original h-right section (for desktop) -->
-        <div class="h-right">
-            <!-- Search Bar and Prompt -->
-            <input type="text" id="search-bar" placeholder=" 🔍 Search places..." onkeyup="searchPlaces()" class="nav-btn">
-            <div id="search-prompt" class="search-prompt"></div>
-    
-            <!-- Desktop login/account elements -->
-            <button id="login-btn" class="desktop-login nav-btn" onclick="redirectToLogin()">Login</button>
-            <div id="account-container" class="desktop-account" style="display: none;">
-                <div id="user-icon" class="nav-btn" onclick="toggleDropdown()">
-                    <i class="fa fa-user"></i>
-                </div>
-                <div id="account-dropdown" class="dropdown-menu">
-                    <span id="username-display"></span>
-                    <button id="logout-btn" class="nav-btn" onclick="logout()">Logout</button>
-                </div>
+           <!-- Mobile-only login items -->
+        <li class="mobile-login-item" id="mobile-login-btn">
+            <a href="#" class="nav-btn" onclick="redirectToLogin()">Login</a>
+        </li>
+        <li class="mobile-login-item" id="mobile-account-container" style="display: none;">
+            <div id="mobile-user-icon" class="nav-btn" onclick="redirectToAccount()">
+                <i class="fa fa-user"><h3>User</h3></i>
             </div>
+        </li>
+    </ul>
+
+    <!-- Original h-right section (for desktop) -->
+    <div class="h-right">
+        <!-- Search Bar and Prompt -->
+        <input type="text" id="search-bar" placeholder=" 🔍 Search places..." onkeyup="searchPlaces()" class="nav-btn">
+        <div id="search-prompt" class="search-prompt"></div>
+
+        <!-- Desktop login/account elements -->
+        <button id="login-btn" class="desktop-login nav-btn" onclick="redirectToLogin()">Login</button>
+        <div id="account-container" class="desktop-account" style="display: none;">
+            <div id="user-icon" class="nav-btn" onclick="redirectToAccount()">
+                <i class="fa fa-user"></i>
+            </div>
+        </div>
     
             <div class="fa fa-bars navbar-link" id="menu-icon"></div>
         </div>

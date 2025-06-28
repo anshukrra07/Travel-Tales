@@ -20,7 +20,7 @@ function initializeAutocomplete() {
 
         // Extracting place details
         let placeName = place.name;
-        let placeImage = place.photos ? place.photos[0].getUrl({ maxWidth: 800, maxHeight: 600 }) : "images/default.jpg";
+        let placeImage = place.photos ? place.photos[0].getUrl({ maxWidth: 800, maxHeight: 600 }) : "images/default.webp";
         let placeAddress = place.formatted_address || "Address not available";
         let placeRating = place.rating ? place.rating : "No rating available";
 

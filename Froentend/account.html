@@ -3,124 +3,68 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Account - Travel Tales</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 700px;
-      margin: 40px auto;
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    h2 {
-      text-align: center;
-      color: #333;
-    }
-    .info {
-      margin: 20px 0;
-    }
-    .info label {
-      font-weight: bold;
-    }
-    .info p {
-      margin: 5px 0 15px;
-      color: #555;
-    }
-    .sections {
-      margin-top: 30px;
-    }
-    .section {
-      margin-bottom: 20px;
-    }
-    .section h3 {
-      margin-bottom: 10px;
-      color: #444;
-    }
-    .logout-btn {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 10px 20px;
-      background: #e74c3c;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .logout-btn:hover {
-      background: #c0392b;
-    }
-  </style>
+  <title>Travel Tales | My Account</title>
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"/>
+  <link rel="stylesheet" href="account-style.css"/>
 </head>
 <body>
 
-<div class="container">
-  <h2>Account Details</h2>
-
-  <div class="info">
-    <label>Username:</label>
-    <p id="username">Loading...</p>
-
-    <label>Email:</label>
-    <p id="email">Loading...</p>
-
-    <label>Date of Birth:</label>
-    <p id="dob">Loading...</p>
+<div class="account-wrapper">
+  <div class="sidebar">
+    <div class="profile-icon"><i class='bx bx-user'></i></div>
+    <h2 id="sidebar-username">Loading...</h2>
+    <p id="sidebar-email">Loading...</p>
+    <button class="logout-btn" onclick="logout()">Logout</button>
   </div>
 
-  <button class="logout-btn" onclick="logout()">Logout</button>
+  <div class="main-content">
+    <h1>Profile Info</h1>
+    
+    <div class="info-card">
+      <label>Username</label>
+      <p id="username">Loading...</p>
+    </div>
 
-  <div class="sections">
+    <div class="info-card">
+      <label>Email</label>
+      <p id="email">Loading...</p>
+    </div>
+
+    <div class="info-card">
+      <label>Date of Birth</label>
+      <p id="dob">Loading...</p>
+    </div>
+
+    <div class="info-card">
+      <label>Account Created</label>
+      <p id="createdAt">Loading...</p>
+    </div>
+
     <div class="section">
-      <h3>Favorites</h3>
+      <h2>Favorites</h2>
       <ul id="favorites">
         <li>No favorites yet.</li>
       </ul>
     </div>
 
     <div class="section">
-      <h3>History</h3>
+      <h2>Booking History</h2>
       <ul id="history">
-        <li>No history yet.</li>
+        <li>No booking history yet.</li>
       </ul>
     </div>
   </div>
 </div>
 
-<script>
-  const token = localStorage.getItem("token");
 
-  fetch("https://travel-tales-f0hb.onrender.com/api/auth/me", {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.status === "success") {
-        document.getElementById("username").textContent = data.user.name;
-        document.getElementById("email").textContent = data.user.email;
-        document.getElementById("dob").textContent = data.user.dob || "N/A";
-      } else {
-        window.location.href = "login.html";
-      }
-    })
-    .catch((err) => {
-      console.error("Auth error:", err);
-      window.location.href = "login.html";
-    });
+    <script src="config.js"></script>
+    <script src="login-check.js"></script>
+    <script src="account.js"></script>
+    <script src="access.js"></script>
 
-  function logout() {
-    localStorage.removeItem("token");
-    window.location.href = "login.html";
-  }
-</script>
+
+
+
 
 </body>
 </html>

@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
     checkLoginStatus();
-    handleScreenResize();
 });
 
 function checkLoginStatus() {
@@ -18,13 +17,13 @@ function checkLoginStatus() {
         // Update desktop view
         if (loginBtn) loginBtn.style.display = "none";
         if (accountContainer) accountContainer.style.display = "block";
-        document.getElementById("username-display").textContent = username;
+
         
         // Update mobile view
         if (mobileLoginBtn) mobileLoginBtn.style.display = "none";
         if (mobileAccountContainer) {
             mobileAccountContainer.style.display = "block";
-            document.getElementById("mobile-username-display").textContent = username;
+
         }
     } else {
         // Update desktop view
@@ -42,7 +41,8 @@ function redirectToLogin() {
 }
 
 function logout() {
-    localStorage.removeItem("loggedInUser");
+    localStorage.removeItem('token');
+    localStorage.removeItem('loggedInUser');
     checkLoginStatus();
 }
 

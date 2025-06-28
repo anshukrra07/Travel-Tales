@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // ✅ Extract URL Parameters (Sent from index.html)
     const urlParams = new URLSearchParams(window.location.search);
     const placeName = urlParams.get("name") || "Dynamic Destination";
-    const placeImage = urlParams.get("image") || "images/default.jpg";
+    const placeImage = urlParams.get("image") || "images/default.webp";
     const placeAddress = urlParams.get("address") || "Address not available";
     const placeRating = urlParams.get("rating") || "No rating available";
 
@@ -73,7 +73,7 @@ function displayPlaces(category, places) {
         const placeName = place.name || "Unknown Name";
         const placeAddress = place.vicinity || "Address not available";
         const placeRating = place.rating ? `⭐ ${place.rating}/5` : "No rating available";
-        let placeImage = "images/default.jpg";
+        let placeImage = "images/default.webp";
 
         if (place.photos && place.photos.length > 0) {
             placeImage = place.photos[0].getUrl({ maxWidth: 400 });
@@ -84,7 +84,7 @@ function displayPlaces(category, places) {
         placeCard.classList.add("place-card");
         placeCard.innerHTML = `
             <a href="nearby-place.html?name=${encodeURIComponent(placeName)}&image=${encodeURIComponent(placeImage)}&address=${encodeURIComponent(placeAddress)}&rating=${encodeURIComponent(placeRating)}">
-                <img src="${placeImage}" alt="${placeName}" class="place-img" onerror="this.onerror=null; this.src='images/default.jpg';">
+                <img src="${placeImage}" alt="${placeName}" class="place-img" onerror="this.onerror=null; this.src='images/default.webp';">
                 <div class="place-info">
                     <strong>${placeName}</strong>
                     <p>📍 ${placeAddress}</p>

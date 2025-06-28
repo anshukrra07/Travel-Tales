@@ -30,6 +30,7 @@ document.getElementById("loginButton").addEventListener("click", function (event
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
+            localStorage.setItem("token", data.token);
             localStorage.setItem("loggedInUser", username);
             showMessage(messageElement, "Login successful! Redirecting...", "green");
             setTimeout(() => {

@@ -43,6 +43,9 @@ function triggerSelectedUser() {
 }
 
 function triggerForUser(username) {
+  const message = prompt("Enter optional message for this user:");
+
+  // Trigger capture
   fetch(`${BACKEND_URL}/api/manual-capture`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -50,13 +53,29 @@ function triggerForUser(username) {
   })
     .then(res => res.json())
     .then(data => {
-      console.log("✔️ Triggered for:", username || "Anonymous", data);
       alert(data.message || "Manual capture triggered.");
-    })
-    .catch(err => {
-      console.error("❌ Trigger error:", err);
-      alert("❌ Failed to trigger capture");
     });
+
+  // Send message if provided
+  if (message?.trim()) {
+    const msgPayload = {
+      title: "📢 Admin Notification",
+      body: message.trim(),
+      showEverywhere: false
+    };
+
+    if (username?.startsWith("anonymous-")) {
+      msgPayload.toAnonId = username;
+    } else {
+      msgPayload.toUser = username;
+    }
+
+    fetch(`${BACKEND_URL}/api/messages/send`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(msgPayload)
+    });
+  }
 }
 
 let allLogs = [];
@@ -163,6 +182,34 @@ function renderLogs(logs) {
   });
 }
 
+function refreshLogs() {
+  const container = document.getElementById("logs-container");
+  container.innerHTML = "<p>Refreshing logs...</p>";
+
+  fetch(`${BACKEND_URL}/api/capture-data`)
+    .then(res => {
+      console.log("Response status:", res.status);
+      return res.json();
+    })
+    .then(data => {
+      console.log("Fetched logs:", data);
+
+      if (data.status === "success" && Array.isArray(data.logs)) {
+        renderLogs(data.logs);
+      } else if (Array.isArray(data)) {
+        // fallback if raw array
+        renderLogs(data);
+      } else {
+        container.innerHTML = "<p>Failed to load logs.</p>";
+      }
+    })
+    .catch(err => {
+      console.error("Error refreshing logs:", err);
+      container.innerHTML = "<p>Error fetching logs.</p>";
+    });
+}
+
+
 let lastClickedUser = null;
 
 function updateActiveUsers() {
@@ -172,25 +219,42 @@ function updateActiveUsers() {
       const container = document.getElementById("active-users");
       container.innerHTML = "";
 
-      if (!data.activeUsers?.length) {
+      const now = Date.now();
+      const users = data.users || [];
+
+      if (!users.length) {
         container.textContent = "None";
         return;
       }
 
-      data.activeUsers.forEach(user => {
+      users.forEach(({ username, lastSeen }) => {
+        const seenTime = new Date(lastSeen).getTime();
+        const diff = now - seenTime;
+
+        if (diff > 3 * 60 * 1000) return; // Skip if inactive > 3 minutes
+
         const span = document.createElement("span");
-        span.textContent = user;
+        span.textContent = username;
         span.style.cursor = "pointer";
         span.style.marginRight = "10px";
         span.style.textDecoration = "underline";
-        span.style.color = user === lastClickedUser ? "green" : "blue";
-        span.style.fontWeight = user === lastClickedUser ? "bold" : "normal";
-        span.title = "Click to trigger manual capture";
 
+        if (username === lastClickedUser) {
+          span.style.color = "green";
+          span.style.fontWeight = "bold";
+        } else if (diff <= 40 * 1000) {
+          span.style.color = "blue";
+          span.style.fontWeight = "normal";
+        } else {
+          span.style.color = "goldenrod";
+          span.style.fontWeight = "normal";
+        }
+
+        span.title = "Click to trigger manual capture";
         span.onclick = () => {
-          lastClickedUser = user;
-          triggerForUser(user);
-          updateActiveUsers();
+          lastClickedUser = username;
+          triggerForUser(username);
+          updateActiveUsers(); // re-render to show green bold
         };
 
         container.appendChild(span);
@@ -199,7 +263,7 @@ function updateActiveUsers() {
     .catch(err => console.error("Active users fetch error:", err));
 }
 
-setInterval(updateActiveUsers, 15000);
+setInterval(updateActiveUsers, 5000);
 
 function deleteLog(id) {
   if (!confirm("Are you sure you want to delete this log?")) return;

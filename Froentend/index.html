@@ -41,12 +41,8 @@
             <a href="#" class="nav-btn" onclick="redirectToLogin()">Login</a>
         </li>
         <li class="mobile-login-item" id="mobile-account-container" style="display: none;">
-            <div id="mobile-user-icon" class="nav-btn" onclick="toggleDropdown()">
+            <div id="mobile-user-icon" class="nav-btn" onclick="redirectToAccount()">
                 <i class="fa fa-user"><h3>User</h3></i>
-            </div>
-            <div id="mobile-account-dropdown" class="dropdown-menu">
-                <span id="mobile-username-display"></span>
-                <button id="mobile-logout-btn" class="nav-btn" onclick="logout()">Logout</button>
             </div>
         </li>
     </ul>
@@ -60,12 +56,8 @@
         <!-- Desktop login/account elements -->
         <button id="login-btn" class="desktop-login nav-btn" onclick="redirectToLogin()">Login</button>
         <div id="account-container" class="desktop-account" style="display: none;">
-            <div id="user-icon" class="nav-btn" onclick="toggleDropdown()">
+            <div id="user-icon" class="nav-btn" onclick="redirectToAccount()">
                 <i class="fa fa-user"></i>
-            </div>
-            <div id="account-dropdown" class="dropdown-menu">
-                <span id="username-display"></span>
-                <button id="logout-btn" class="nav-btn" onclick="logout()">Logout</button>
             </div>
         </div>
 
@@ -167,19 +159,19 @@
         </div>
         <div class="activity-content">
             <div class="box">
-                <img src="images/camping.jpg" alt="">
+                <img src="images/camping.webp" alt="">
                 <h4>Camping</h4>
             </div>
             <div class="box">
-                <img src="images/hiking.jpg" alt="">
+                <img src="images/hiking.webp" alt="">
                 <h4>Hiking</h4>
             </div>
             <div class="box">
-                <img src="images/climbing.jpg" alt="">
+                <img src="images/climbing.webp" alt="">
                 <h4>Climbing</h4>
             </div>
             <div class="box">
-                <img src="images/paragliding.jpg" alt="">
+                <img src="images/paragliding.webp" alt="">
                 <h4>Paragliding</h4>
             </div>
 
@@ -254,9 +246,7 @@
     <script src="google.place.api-script.js"></script>
     <script src="login-check.js"></script>
     <script src="config.js"></script>
-     <script src="access.js"></script>
-    <script src="google.place.api-script.js"></script>
-    <script src="login-check.js"></script>
+    <script src="access.js"></script>
 
     
 

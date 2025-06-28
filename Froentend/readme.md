@@ -14,7 +14,7 @@
 
 I created a landing page for a travel website using HTML, CSS, and JavaScript. My goal was to make a simple, clean, and user-friendly interface.
 
-![Travel Tales Desktop Demo](preview.jpg "Desktop Demo")
+![Travel Tales Desktop Demo](preview.webp "Desktop Demo")
 
 The landing page includes:
 * A header section with the logo and navbar

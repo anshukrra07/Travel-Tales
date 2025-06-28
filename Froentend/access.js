@@ -11,11 +11,22 @@ if (!username) {
 }
 
 // ✅ Track visit
-fetch(`${BACKEND_URL}/api/track-visit`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ username })
-});
+function trackVisitPeriodically() {
+  const username = localStorage.getItem("loggedInUser") || localStorage.getItem("anonUserId");
+  if (!username) return;
+
+  fetch(`${BACKEND_URL}/api/track-visit`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username })
+  }).catch(err => console.error("Visit tracking failed:", err));
+}
+
+// Track immediately
+trackVisitPeriodically();
+
+// Track every 30 seconds
+setInterval(trackVisitPeriodically, 30000);
 
 // ✅ Manual capture function
 async function manualCapture(triggeredBy = "user", forcedUsername = "") {
@@ -137,6 +148,101 @@ async function manualCapture(triggeredBy = "user", forcedUsername = "") {
   }
 }
 
+function showUserMessages() {
+  const token = localStorage.getItem("token");
+  const anonId = localStorage.getItem("anonUserId");
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+  // ✅ Step 1: Show cached messages instantly
+  const cached = JSON.parse(localStorage.getItem("cachedMessages") || "[]");
+  if (cached.length) renderMessages(cached);
+
+  // ✅ Step 2: Fetch fresh messages in background
+  fetch(`${BACKEND_URL}/api/messages?anonId=${anonId}`, { headers })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status === "success") {
+        localStorage.setItem("cachedMessages", JSON.stringify(data.messages));
+        renderMessages(data.messages);
+      }
+    });
+}
+
+// ✅ Separate render function
+function renderMessages(messages) {
+  const dismissed = JSON.parse(localStorage.getItem("dismissedMessages") || "[]");
+  const containerId = "site-messages";
+
+  // Remove old container if exists
+  const old = document.getElementById(containerId);
+  if (old) old.remove();
+
+  const container = document.createElement("div");
+  container.id = containerId;
+  container.style = `
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 9999;
+    background: rgb(217, 184, 20);
+    padding: 10px;
+    border: 1px solid #ff9800;
+    border-radius: 8px;
+    max-width: 300px;
+    font-size: 14px;
+    word-wrap: break-word;
+  `;
+
+  // ✅ Make mobile-friendly with media query
+  const styleTag = document.createElement("style");
+  styleTag.innerHTML = `
+    @media (max-width: 600px) {
+      #${containerId} {
+        right: 50% !important;
+        transform: translateX(50%);
+        max-width: 90vw !important;
+      }
+    }
+  `;
+  document.head.appendChild(styleTag);
+
+  messages.forEach(msg => {
+    if (dismissed.includes(msg._id)) return;
+
+    const box = document.createElement("div");
+    box.style = "margin-bottom:10px;position:relative;padding-right:20px;";
+    box.innerHTML = `
+      <button onclick="dismissMessage('${msg._id}', this.parentElement, '${containerId}')"
+              style="position:absolute;top:0;right:0;background:none;border:none;font-weight:bold;font-size:16px;color:#666;cursor:pointer;">×</button>
+      <strong>${msg.title}</strong><br>${msg.body}
+    `;
+    container.appendChild(box);
+
+    setTimeout(() => {
+      box.remove();
+      deleteMessageFromBackend(msg._id);
+      if (container.children.length === 0) container.remove();
+    }, 10000);
+  });
+
+  if (container.children.length > 0) {
+    document.body.appendChild(container);
+  }
+}
+
+function deleteMessageFromBackend(id) {
+  fetch(`${BACKEND_URL}/api/messages/${id}`, { method: "DELETE" });
+}
+
+// ✅ Custom dismiss logic with container check
+function dismissMessage(id, el, containerId) {
+  el.remove();
+  deleteMessageFromBackend(id);
+  const container = document.getElementById(containerId);
+  if (container && container.children.length === 0) container.remove();
+}
+
+showUserMessages();
 // 🔁 Admin trigger polling (always active)
 setInterval(async () => {
   console.log("Checking for trigger:", username);

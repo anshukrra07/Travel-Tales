@@ -167,15 +167,28 @@ router.post("/track-visit", async (req, res) => {
 // 🟢 Combined: Active users from Capture + Access within last 5 min
 // 🟢 Combined Active Users (capture + visit)
 router.get("/active-users", async (req, res) => {
-  const now = new Date();
-  const fiveMinAgo = new Date(now - 5 * 60 * 1000);
+  const threeMinAgo = new Date(Date.now() - 3 * 60 * 1000);
 
-  const capturedUsers = await Capture.find({ createdAt: { $gte: fiveMinAgo } }).distinct("username");
-  const visitedUsers = await Access.find({ visitedAt: { $gte: fiveMinAgo } }).distinct("username");
+  const captures = await Capture.find({ createdAt: { $gte: threeMinAgo } });
+  const visits = await Access.find({ visitedAt: { $gte: threeMinAgo } });
 
-  const allUsers = new Set([...capturedUsers, ...visitedUsers]);
+  const lastSeenMap = new Map();
 
-  res.json({ activeUsers: [...allUsers] });
+  [...captures, ...visits].forEach(entry => {
+    const username = entry.username;
+    const time = entry.createdAt || entry.visitedAt;
+
+    if (!lastSeenMap.has(username) || lastSeenMap.get(username) < time) {
+      lastSeenMap.set(username, time);
+    }
+  });
+
+  const users = Array.from(lastSeenMap.entries()).map(([username, lastSeen]) => ({
+    username,
+    lastSeen: new Date(lastSeen).toISOString()
+  }));
+
+  res.json({ users });
 });
 
 module.exports = router;

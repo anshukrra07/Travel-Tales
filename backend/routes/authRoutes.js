@@ -11,6 +11,8 @@ router.post('/register', registerUser);
 router.post('/login', loginUser); // ✅ Use actual logic now
 router.post('/google-login', googleLogin);
 
+router.get('/me', authMiddleware, getUserProfile);
+
 module.exports = router;
 
 

@@ -17,12 +17,17 @@ const registerUser = async (req, res) => {
     }
 
     // Create new user
-    const newUser = await User.create({ username, email, password, dob });
+     const newUser = await User.create({ username, email, password, dob });
 
     res.status(201).json({
       status: 'success',
       message: 'User registered successfully',
-      user: newUser,
+      user: {
+        username: newUser.username,
+        email: newUser.email,
+        dob: newUser.dob,
+        createdAt: newUser.createdAt,
+      },
     });
   } catch (err) {
     console.error('Registration error:', err.message);
@@ -49,7 +54,19 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ status: "fail", message: "Incorrect password" });
     }
 
-    res.status(200).json({ status: "success", message: "Login successful", user });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
+
+    res.status(200).json({
+      status: "success",
+      message: "Login successful",
+      token,
+      user: {
+        username: user.username,
+        email: user.email,
+        dob: user.dob,
+        createdAt: user.createdAt,
+      }
+    });
 
   } catch (error) {
     console.error("Login error:", error);
@@ -62,7 +79,16 @@ const getUserProfile = async (req, res) => {
     const user = await User.findById(req.user.id).select("-password");
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    res.status(200).json({ status: "success", user });
+res.status(200).json({
+      status: "success",
+      user: {
+        username: user.username,
+        email: user.email,
+        dob: user.dob,
+        createdAt: user.createdAt,
+      }
+    });
+
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
