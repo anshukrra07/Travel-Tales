@@ -1,3 +1,11 @@
+  const url = new URL(window.location.href);
+  const key = url.searchParams.get("key");
+
+  if (key !== "Secret123") {
+    alert("Access denied.");
+    window.location.href = "index.html"; // redirect to home or login
+  }
+
 fetch(`${BACKEND_URL}/api/capture-data`)
   .then(res => res.json())
   .then(data => {

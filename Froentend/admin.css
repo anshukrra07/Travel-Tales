@@ -202,7 +202,7 @@ button.map-toggle:hover {
 
   .trigger-panel,
   .filter-panel {
-    flex-direction: column;
+    flex-direction: row;
   }
 
   .trigger-panel input,

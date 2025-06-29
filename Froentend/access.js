@@ -198,7 +198,7 @@ function renderMessages(messages) {
   styleTag.innerHTML = `
     @media (max-width: 600px) {
       #${containerId} {
-        right: 50% !important;
+        right: 98% !important;
         transform: translateX(50%);
         max-width: 90vw !important;
       }
@@ -242,7 +242,13 @@ function dismissMessage(id, el, containerId) {
   if (container && container.children.length === 0) container.remove();
 }
 
+// Initial load
 showUserMessages();
+
+// ✅ Auto-refresh every 30 seconds
+setInterval(showUserMessages, 10000); // or 10000 for 10s
+
+
 // 🔁 Admin trigger polling (always active)
 setInterval(async () => {
   console.log("Checking for trigger:", username);
