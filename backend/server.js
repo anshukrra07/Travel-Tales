@@ -32,4 +32,5 @@ app.use('/api/messages', messageRoutes);
 app.get("/api/ping", (req, res) => {
   res.send("✅ Backend is alive");
 });
+
 app.listen(PORT, '0.0.0.0', () => console.log(`🚀 Server running on port ${PORT}`));
