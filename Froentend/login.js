@@ -5,6 +5,10 @@ const users = [];
 const serverValidUsername = "serverUser123";
 const serverValidPassword = "serverPass123";
 
+document.getElementById('websiteName').addEventListener('click', () => {
+  window.location.href = 'index.html';
+});
+
 // Event listener for regular login form submission
 document.getElementById("loginButton").addEventListener("click", function (event) {
     event.preventDefault();

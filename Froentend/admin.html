@@ -7,6 +7,12 @@
     <link rel="icon" href="images/favicon.png">
 
   <link rel="stylesheet" href="admin.css">
+  <script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+  }
+  </script>
+
 </head>
 <body>
   <h1>📋 Admin Dashboard – Captured Logs</h1>

@@ -69,16 +69,60 @@
     .home {
         height: 90vh;
     }
+    .categories .home-text{
+    padding: 50px 2% 40px;
+}
 }
 
 @media (max-width: 1050px) {
-    .categories-content {
-        gap: 1rem;
+     .home {
+        height: 75vh; /* Increased from 75vh */
+        margin-top: 73px;
+        background-position: center 30%; /* Better image cropping */
     }
     
+    .home-text h5 {
+        font-size: 27px; /* Increased from 20px */
+        letter-spacing: 4.5px;
+        margin-bottom: 12px;
+    }
+    
+    .home-text h1 {
+        font-size: 3.8rem; /* Increased from 2.5rem */
+        line-height: 1.25;
+        margin-bottom: 20px;
+    }
+    
+    .home-text p {
+        font-size: 15px; /* Increased from 15px */
+        line-height: 1.7;
+        margin-bottom: 30px;
+    }
+    
+    .btn {
+        padding: 9px 22px; /* Increased from 11px 28px */
+        font-size: 15px; /* Increased from 15px */
+    }
+    .categories-content {
+        gap: 3rem;
+    }
+
+     .destination-header{
+            height: 60vh; /* Increased from 70vh */
+            margin-top: 73px;
+            background-position: center 30%;
+        }
+    .destination-header h1 {
+            font-size: 3.5rem; /* Reduced from 4.5rem */
+            font-weight: 600; /* Slightly lighter */
+            text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.7); /* Softer shadow */
+            background: rgba(0, 0, 0, 0.1);
+            padding: 18px; /* Slightly reduced padding */
+        }
+    
     .row-img {
-        width: 120px;
-        height: 200px;
+        width: 150px;
+        height: 210px;
     }
     
     .about {
@@ -132,8 +176,44 @@
         left: 0;
     }
 }
+@media (max-width: 900px) {
+     .home {
+        height: 70vh; /* Increased from 75vh */
+        margin-top: 73px;
+        background-position: center 30%; /* Better image cropping */
+    }
+    
+    .home-text h5 {
+        font-size: 25px; /* Increased from 20px */
+        letter-spacing: 4.5px;
+        margin-bottom: 12px;
+    }
+    
+    .home-text h1 {
+        font-size: 3.3rem; /* Increased from 2.5rem */
+        line-height: 1.25;
+        margin-bottom: 20px;
+    }
+    
+    .home-text p {
+        font-size: 14px; /* Increased from 15px */
+        line-height: 1.7;
+        margin-bottom: 30px;
+    }
+    
+    .btn {
+        padding: 8px 22px; /* Increased from 11px 28px */
+        font-size: 14px; /* Increased from 15px */
+    }
+
+      .categories .home-text{
+    padding: 30px 2% 30px;
+}
+
+}
 
 @media (max-width: 800px) {
+    
     .about {
         grid-template-columns: 1fr;
     }
@@ -141,11 +221,29 @@
     .categories-content {
         gap: 3rem;
     }
+
+      .categories .home-text{
+    padding: 30px 2% 30px;
+}
     
     .row-img {
-        width: 120px;
+        width: 130px;
         height: 200px;
     }
+
+
+        .destination-header{
+            height: 42vh; /* Increased from 70vh */
+            margin-top: 73px;
+            background-position: center 30%;
+        }
+    .destination-header h1 {
+            font-size: 3.0rem; /* Reduced from 4.5rem */
+            font-weight: 600; /* Slightly lighter */
+            text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.7); /* Softer shadow */
+            background: rgba(0, 0, 0, 0.1);
+            padding: 18px; /* Slightly reduced padding */
+        }
 
     .about-img img {
         width: 100%;
@@ -391,7 +489,7 @@
 
 @media screen and (max-width: 767px){
     .home {
-        height: 80vh; /* Increased from 75vh */
+        height: 60vh; /* Increased from 75vh */
         margin-top: 73px;
         background-position: center 30%; /* Better image cropping */
     }
@@ -409,14 +507,14 @@
     }
     
     .home-text p {
-        font-size: 16px; /* Increased from 15px */
+        font-size: 13px; /* Increased from 15px */
         line-height: 1.7;
         margin-bottom: 30px;
     }
     
     .btn {
-        padding: 12px 30px; /* Increased from 11px 28px */
-        font-size: 16px; /* Increased from 15px */
+        padding: 8px 20px; /* Increased from 11px 28px */
+        font-size: 14px; /* Increased from 15px */
     }
 
          /* Destination section adjustments */
@@ -452,13 +550,13 @@
         
         /* dynamic page responsive media */
         .destination-header{
-            height: 75vh; /* Increased from 70vh */
+            height: 42vh; /* Increased from 70vh */
             margin-top: 73px;
             background-position: center 30%;
         }
         .destination-header h1 {
-            font-size: 3.8rem; /* Reduced from 4.5rem */
-            font-weight: 700; /* Slightly lighter */
+            font-size: 2.5rem; /* Reduced from 4.5rem */
+            font-weight: 600; /* Slightly lighter */
             text-shadow: 2px 2px 15px rgba(0, 0, 0, 0.7); /* Softer shadow */
             background: rgba(0, 0, 0, 0.1);
             padding: 18px; /* Slightly reduced padding */
@@ -482,33 +580,37 @@
     }
 
     .home {
-        height: 75vh; /* Increased from 70vh */
+        height: 40vh; /* Increased from 70vh */
         margin-top: 73px;
         background-position: center 30%; /* Better image cropping */
     }
 
     .home-text h5 {
-        font-size: 20px; /* Increased from 18px */
+        font-size: 16px; /* Increased from 18px */
         letter-spacing: 4px;
         margin-bottom: 10px;
     }
 
     .home-text h1 {
-        font-size: 2.5rem; /* Increased from 2.2rem */
+        font-size: 2.0rem; /* Increased from 2.2rem */
         line-height: 1.2;
         margin-bottom: 18px;
     }
 
     .home-text p {
-        font-size: 15px; /* Increased from 14px */
+        font-size: 12px; /* Increased from 14px */
         line-height: 1.6;
         margin-bottom: 28px;
     }
 
     .btn {
-        padding: 11px 28px; /* Slightly larger */
-        font-size: 15px;
+        padding: 7px 15px; /* Slightly larger */
+        font-size: 12px;
     }
+
+    .categories .home-text{
+    padding: 20px 2% 30px;
+}
 
     .newsletter-content {
         grid-template-columns: 1fr;

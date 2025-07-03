@@ -17,7 +17,7 @@ body {
 
 /* Header with Background Image */
 
-.destination-header {
+.destination-header1 {
     position: relative;
     height: 500px; /* Increased height */
     display: flex;
@@ -28,7 +28,7 @@ body {
     overflow: hidden; /* Ensure the image doesn't overflow */
 }
 
-.destination-header::before {
+.destination-header1::before {
     content: '';
     position: absolute;
     top: 0;
@@ -43,7 +43,7 @@ body {
     transform: scale(1.02); /* Slightly scale up to cover edges */
 }
 
-.destination-header h1 {
+.destination-header1 h1 {
     position: relative;
     z-index: 1;
     font-size: 54px; /* Slightly smaller size */
@@ -129,11 +129,30 @@ body {
     }
 }
 
+@media (max-width: 1050px) {
+
+   .destination-header1{
+            height: 70vh; /* Increased from 70vh */
+            margin-top: 73px;
+            background-position: center 30%;
+        }
+        .destination-header1 h1 {
+            font-size: 3.0rem; /* Reduced from 4.5rem */
+        }
+}
 /* Tablets & large phones */
 @media (max-width: 900px) {
     .places-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+   .destination-header1{
+            height: 60vh; /* Increased from 70vh */
+            margin-top: 73px;
+            background-position: center 30%;
+        }
+          .destination-header1 h1 {
+            font-size: 2.5rem; /* Reduced from 4.5rem */
+        }
 }
 
 /* Mobile screens */
@@ -143,6 +162,14 @@ body {
         gap: 20px;
         padding: 0 10px;
     }
+    .destination-header1{
+            height: 42vh; /* Increased from 70vh */
+            margin-top: 73px;
+            background-position: center 30%;
+        }
+          .destination-header1 h1 {
+            font-size: 1.8rem; /* Reduced from 4.5rem */
+        }
 }
 
 @media (max-width: 480px) {

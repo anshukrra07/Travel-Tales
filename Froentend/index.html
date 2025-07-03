@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Travel Tales Website</title>
 
@@ -19,6 +19,41 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     
+    <link rel="manifest" href="manifest.json" />
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+  }
+</script>
+
+<style>
+    .capture{
+  padding: 50px;
+padding-bottom: 1px;
+}
+    .capture-button {
+  background-color: #ff6b00;
+  color: #fff;
+  font-weight: bold;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.capture-button:hover {
+  background-color: #e05d00;
+  transform: scale(1.03);
+}
+
+.capture-button:active {
+  background-color: #c14f00;
+  transform: scale(0.97);
+}
+</style>
    
 </head>
 
@@ -78,6 +113,12 @@
     </div>
   </section>
      <!-- home section end-->
+
+ <div class="capture">
+    <center>
+    <button type="button" class="capture-button" onclick="manualCapture()">🎥 Capture The Moment</button> 
+    </center>
+    </div>
 
 
     <!-- categories section start -->
@@ -247,6 +288,7 @@
     <script src="login-check.js"></script>
     <script src="config.js"></script>
     <script src="access.js"></script>
+    <script type="module" src="./fcm-init.js"></script>
 
     
 

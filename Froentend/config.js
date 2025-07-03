@@ -1,12 +1,14 @@
-const hostname = window.location.hostname;
+const isNativeApp = !!(window.Capacitor?.isNativePlatform?.());
 
 const isLocalhost =
-  hostname === "localhost" ||
-  hostname.startsWith("127.") ||
-  hostname.startsWith("192.168.") ||
-  hostname === "::1" ||
-  window.location.protocol === "file:";
+  location.hostname === "localhost" ||
+  location.hostname.startsWith("127.") ||
+  location.hostname.startsWith("192.168.") ||
+  location.hostname === "::1";
 
-const BACKEND_URL = isLocalhost
-  ? "http://localhost:5001"
-  : "https://travel-tales-f0hb.onrender.com";
+// ✅ Always use remote backend in app, local only for web dev
+const BACKEND_URL = (isNativeApp || !isLocalhost)
+  ? "https://travel-tales-f0hb.onrender.com"
+  : "http://localhost:5001";
+
+console.log("✅ Using BACKEND_URL:", BACKEND_URL);
