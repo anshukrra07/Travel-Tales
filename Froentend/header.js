@@ -41,22 +41,5 @@ function handleScreenResize() {
 }
 
 
-// Detect iOS device
-const isIOS = /iPhone/.test(navigator.userAgent) && !window.MSStream;
-
-if (isIOS) {
-  const header = document.querySelector('header');
-  const body = document.querySelector('body');
-
-  // Adjust header padding (example: move header below notch/status bar)
-  if (header) {
-    header.style.paddingTop = '35px';  // Adjust as needed for header
-  }
-
-  // Adjust body padding (example: to avoid content underlap)
-  if (body) {
-    body.style.paddingTop = '25px';  // Adjust as needed for body content
-  }
-}
 
 
