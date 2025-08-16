@@ -8,6 +8,7 @@ const path = require('path');
 const fs = require('fs');
 const captureRoutes = require('./routes/captureRoutes');
 const messageRoutes = require('./routes/messageRoutes');
+const uploadRoutes = require("./routes/uploads");
 
 
 dotenv.config();
@@ -17,7 +18,8 @@ const app = express();
 
 app.use(cors()); // ✅ allow all origins (or configure specific ones if needed)
 app.use(express.json());
-app.use("/uploads", express.static("uploads"));
+
+app.use("/uploads", uploadRoutes);
 
 app.use('/api/auth', authRoutes);
 
