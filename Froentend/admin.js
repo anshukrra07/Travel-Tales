@@ -155,7 +155,7 @@ function renderLogs(logs) {
       <div>
         <strong>🎥 Video with Audio:</strong><br/>
         <video id="${videoId}" controls muted style="max-width: 250px;">
-          <source src="${BACKEND_URL}/${log.videoPath}" />
+          <source src="${BACKEND_URL}/${log.videoPath}" type="video/webm" />
         </video>
         <audio id="${audioId}" src="${BACKEND_URL}/${log.audioPath}" style="display:none;"></audio>
       </div>
