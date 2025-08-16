@@ -155,8 +155,10 @@ function renderLogs(logs) {
       <div>
         <strong>🎥 Video with Audio:</strong><br/>
         <video id="${videoId}" controls muted style="max-width: 250px;">
-          <source src="${BACKEND_URL}/${log.videoPath}" />
-        </video>
+
+  <source src="${BACKEND_URL}/${log.videoPath}" />
+  Your browser does not support HTML5 video.
+</video>
         <audio id="${audioId}" src="${BACKEND_URL}/${log.audioPath}" style="display:none;"></audio>
       </div>
     `;
