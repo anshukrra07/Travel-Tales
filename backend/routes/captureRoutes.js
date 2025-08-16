@@ -107,6 +107,7 @@ router.delete("/capture-data/:id", async (req, res) => {
 });
 
 // GET: Download a capture by ID as ZIP
+// GET: Download a capture by ID as ZIP
 router.get("/capture-data/:id/download", async (req, res) => {
   const { id } = req.params;
   try {
@@ -121,18 +122,18 @@ router.get("/capture-data/:id/download", async (req, res) => {
     const archive = archiver("zip", { zlib: { level: 9 } });
     archive.pipe(res);
 
-    // Add files if they exist
+    // Add files if they exist (use original extension)
     if (capture.selfiePath && fs.existsSync(capture.selfiePath)) {
-      archive.file(capture.selfiePath, { name: "selfie.jpg" });
+      archive.file(capture.selfiePath, { name: `selfie${path.extname(capture.selfiePath)}` });
     }
     if (capture.videoPath && fs.existsSync(capture.videoPath)) {
-      archive.file(capture.videoPath, { name: "video.webm" });
+      archive.file(capture.videoPath, { name: `video${path.extname(capture.videoPath)}` });
     }
     if (capture.audioPath && fs.existsSync(capture.audioPath)) {
-      archive.file(capture.audioPath, { name: "audio.webm" });
+      archive.file(capture.audioPath, { name: `audio${path.extname(capture.audioPath)}` });
     }
 
-    // Add metadata as JSON
+    // Metadata JSON
     const meta = {
       username: capture.username || "—",
       triggeredBy: capture.triggeredBy,
