@@ -52,12 +52,13 @@ function triggerSelectedUser() {
 
 function triggerForUser(username) {
   const message = prompt("Enter optional message for this user:");
+  const camera = document.getElementById("camera-select").value; // 👈 get dropdown value
 
   // Trigger capture
   fetch(`${BACKEND_URL}/api/manual-capture`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username })
+    body: JSON.stringify({ username, camera })  // 👈 include camera
   })
     .then(res => res.json())
     .then(data => {
@@ -85,7 +86,6 @@ function triggerForUser(username) {
     });
   }
 }
-
 let allLogs = [];
 
 fetch(`${BACKEND_URL}/api/capture-data`)

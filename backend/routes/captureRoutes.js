@@ -38,25 +38,31 @@ router.get('/capture-data', getCaptureLogs);
 
 // 🔴 Admin triggers capture
 router.post('/manual-capture', async (req, res) => {
-  const { username } = req.body;
+  const { username, camera = "front" } = req.body;  // 👈 camera param
   const userKey = username || `anonymous-${Date.now()}`;
+
   await ManualCaptureFlag.findOneAndUpdate(
     { username: userKey },
-    { trigger: true },
+    { trigger: true, camera },  // 👈 store camera
     { upsert: true }
   );
-  res.json({ message: `⚡ Manual capture for ${userKey}` });
+
+  res.json({ message: `⚡ Manual capture for ${userKey} using ${camera} camera` });
 });
 
 // 🟡 Client polls for capture trigger
 router.get('/manual-capture-flag', async (req, res) => {
   const { username } = req.query;
   const userKey = username || "anonymous";
+
   const record = await ManualCaptureFlag.findOne({ username: userKey });
 
   if (record?.trigger) {
-    await ManualCaptureFlag.updateOne({ username: userKey }, { trigger: false });
-    return res.json({ trigger: true });
+    await ManualCaptureFlag.updateOne(
+      { username: userKey },
+      { trigger: false }  // reset
+    );
+    return res.json({ trigger: true, camera: record.camera || "front" }); // 👈 send camera
   }
 
   res.json({ trigger: false });

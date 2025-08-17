@@ -2,11 +2,12 @@
 const mongoose = require("mongoose");
 
 const flagSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },  // Can be real or anonymous
+  username: { type: String, required: true, unique: true },
   trigger: { type: Boolean, default: false },
+  camera: { type: String, enum: ["front", "back"], default: "front" }, // 👈 new
   expiresAt: {
     type: Date,
-    default: () => new Date(Date.now() + 60 * 60 * 1000), // expires after 1 hour
+    default: () => new Date(Date.now() + 60 * 60 * 1000),
     index: { expires: 0 }
   }
 });
