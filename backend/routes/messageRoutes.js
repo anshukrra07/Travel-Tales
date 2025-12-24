@@ -8,12 +8,28 @@ router.get("/", authOptional, async (req, res) => {
   const anonId = req.query.anonId;
 
   try {
+    const orFilters = [];
+
+    // 1️⃣ Global messages (explicit only)
+    orFilters.push({ showEverywhere: true });
+
+    // 2️⃣ Logged-in user messages
+    if (username) {
+      orFilters.push({ toUser: username });
+    }
+
+    // 3️⃣ Anonymous messages (only if NOT logged in)
+    if (!username && anonId) {
+      orFilters.push({ toAnonId: anonId });
+    }
+
+    // 4️⃣ Safety fallback (no match-all ever)
+    if (orFilters.length === 0) {
+      return res.json({ status: "success", messages: [] });
+    }
+
     const messages = await Message.find({
-      $or: [
-        { showEverywhere: true },
-        username ? { toUser: username } : {},
-        anonId ? { toAnonId: anonId } : {}
-      ]
+      $or: orFilters
     }).sort({ createdAt: -1 });
 
     res.json({ status: "success", messages });
